@@ -127,8 +127,8 @@ doxygen && open docs/index.html # To re-generate docs
     * Pass the option to CMake: `-DVCPKG_OVERLAY_PORTS=/path/to/lib/collection/ports`
     * Install the port using an overlay: `vcpkg install --overlay-ports=/path/to/your/overlay` 
 
-* **Register Version** `vcpkg x-add-version mylib`
-
+* **Register Version** `vcpkg x-add-version mylib`  
+  `git -C $VCPKG_ROOT/ports ls-tree --format='%(objectname)' HEAD -- curl`
 * **Submit PR to Official vcpkg**
 
 ---
@@ -149,6 +149,7 @@ doxygen && open docs/index.html # To re-generate docs
     ```
 
 * **Register Version** `vcpkg x-add-version mylib --overwrite-version`  
+  `git -C $VCPKG_ROOT/ports ls-tree --format='%(objectname)' HEAD -- curl`  
   This updates version metadata and links the correct git tree.
 ---
 
