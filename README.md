@@ -112,9 +112,9 @@ doxygen && open docs/index.html # To re-generate docs
   - Add your port under `ports/mylib/` with [vcpkg.json](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json), [usage](https://learn.microsoft.com/en-us/vcpkg/maintainers/handling-usage-files) and [portfile.cmake](https://learn.microsoft.com/en-us/vcpkg/concepts/ports)
   - Generate `SHA512` checksum:
       ```shell
-      shasum -a 512 mylib.tar.gz
-      vcpkg hash mylib-1.0.0.tar.gz
-      curl -L https://github.com/username/mylib/archive/refs/tags/v1.0.0.tar.gz | sha512sum
+      shasum -a 512 /path/to/mylib.tar.gz
+      vcpkg hash /path/to/mylib-1.0.0.tar.gz
+      curl -L https://github.com/username/mylib/archive/refs/tags/1.0.0.tar.gz | sha512sum
       ```
       **SHA512 Hash:** Copy the output checksum into the `SHA512` field in `portfile.cmake`.
 
@@ -143,9 +143,9 @@ doxygen && open docs/index.html # To re-generate docs
   * Update `vcpkg.json` version on vcpkg repository.
   * Update portfile.cmake `SHA512`
     ```shell
-    shasum -a 512 mylib.tar.gz
-    ./vcpkg hash mylib-1.0.0.tar.gz
-    curl -L https://github.com/username/mylib/archive/refs/tags/v1.1.0.tar.gz | sha512sum
+    shasum -a 512 /path/to/mylib.tar.gz
+    vcpkg hash /path/to/mylib-1.0.0.tar.gz
+    curl -L https://github.com/username/mylib/archive/refs/tags/1.1.0.tar.gz | sha512sum
     ```
 
 * **Register Version** `vcpkg x-add-version mylib --overwrite-version`  
