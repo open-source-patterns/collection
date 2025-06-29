@@ -148,7 +148,8 @@ doxygen && open docs/index.html # To re-generate docs
     curl -L https://github.com/username/mylib/archive/refs/tags/1.1.0.tar.gz | sha512sum
     ```
 
-* **Register Version** `vcpkg x-add-version mylib --overwrite-version`  
+* **Register Version**  
+  `vcpkg x-add-version mylib --overwrite-version`  
   `git -C $VCPKG_ROOT/ports ls-tree --format='%(objectname)' HEAD -- curl`  
   This updates version metadata and links the correct git tree.
 ---

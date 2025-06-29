@@ -1,19 +1,12 @@
 #include <assert.h>
 #include <stdlib.h>
-#include <stdio.h>
 
-#include "collection/array.h"
+#include "collection/collection.h"
 
 struct Test {
     char *name;
     struct Test *next;
 };
-
-// void print(const struct Node *head) {
-//     // for (const struct Node *cursor = head; cursor; cursor = cursor->next) {
-//     //     printf("%s\n", ((struct Test *) cursor->item)->name);
-//     // }
-// }
 
 void testAddFirst() {
     struct IArray *array = collection_array_new();

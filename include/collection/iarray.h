@@ -12,6 +12,10 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+}
+#endif
+
 /**
  * @brief Interface for a thread-safe, generic, singly linked list.
  */
@@ -83,3 +87,7 @@ struct IArray {
      */
     void (*clear)(struct IArray *self, void (*callback)(void *item));
 };
+
+#ifdef __cplusplus
+}
+#endif

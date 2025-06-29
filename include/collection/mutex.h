@@ -26,6 +26,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+}
+#endif
+
 #ifdef _WIN32
 #include <windows.h>
 typedef struct { CRITICAL_SECTION cs; } Mutex;
@@ -42,4 +46,8 @@ typedef pthread_rwlock_t Mutex;
 #define mutex_lock(m) pthread_rwlock_wrlock(m)
 #define mutex_unlock(m) pthread_rwlock_unlock(m)
 #define mutex_lock_shared(m) pthread_rwlock_rdlock(m)
+#endif
+
+#ifdef __cplusplus
+}
 #endif

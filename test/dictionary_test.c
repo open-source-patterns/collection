@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "collection/dictionary.h"
+#include "collection/collection.h"
 
 struct Test {
     int value;
