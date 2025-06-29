@@ -7,10 +7,6 @@
 
 #include "idictionary.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief Creates a new instance of an IDictionary implementation.
  *
@@ -30,7 +26,3 @@ struct IDictionary *collection_dictionary_new();
  *                   Must not be NULL.
  */
 void collection_dictionary_free(struct IDictionary **dictionary);
-
-#ifdef __cplusplus
-}
-#endif

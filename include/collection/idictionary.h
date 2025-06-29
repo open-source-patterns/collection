@@ -15,10 +15,6 @@
 
 #include <stdbool.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @brief Interface for a generic key-value dictionary.
  *
@@ -83,7 +79,3 @@ struct IDictionary {
      */
     void (*clear)(const struct IDictionary *self, void (*callback)(void *value));
 };
-
-#ifdef __cplusplus
-}
-#endif
