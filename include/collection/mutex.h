@@ -27,7 +27,7 @@
 #pragma once
 
 #ifdef __cplusplus
-}
+extern "C" {
 #endif
 
 #ifdef _WIN32

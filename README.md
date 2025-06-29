@@ -109,25 +109,25 @@ doxygen && open docs/index.html # To re-generate docs
 * **Develop Your Library**  [Tutorial](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-powershell)
 
 * **Create a vcpkg Port**
-  - Add your port under `ports/mylib/` with [vcpkg.json](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json), [usage](https://learn.microsoft.com/en-us/vcpkg/maintainers/handling-usage-files) and [portfile.cmake](https://learn.microsoft.com/en-us/vcpkg/concepts/ports)
+  - Add your port under `ports/collection/` with [vcpkg.json](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json), [usage](https://learn.microsoft.com/en-us/vcpkg/maintainers/handling-usage-files) and [portfile.cmake](https://learn.microsoft.com/en-us/vcpkg/concepts/ports)
   - Generate `SHA512` checksum:
       ```shell
-      shasum -a 512 /path/to/mylib.tar.gz
-      vcpkg hash /path/to/mylib-1.0.0.tar.gz
-      curl -L https://github.com/username/mylib/archive/refs/tags/1.0.0.tar.gz | sha512sum
+      shasum -a 512 /path/to/collection.tar.gz
+      vcpkg hash /path/to/collection-1.0.0.tar.gz
+      curl -L https://github.com/open-source-patterns/collection/archive/refs/tags/1.0.0.tar.gz | sha512sum
       ```
       **SHA512 Hash:** Copy the output checksum into the `SHA512` field in `portfile.cmake`.
 
 * **Test Your Port**
   * **Library**: 
-    * Replicate the `ports/mylib` directory structure within your library repository.
+    * Replicate the `ports/collection` directory structure within your library repository.
     * Replace `vcpkg_from_github` with a local path reference to the root:  
         `set(SOURCE_PATH "../../..")`
   * **Consumer**:
     * Pass the option to CMake: `-DVCPKG_OVERLAY_PORTS=/path/to/lib/collection/ports`
     * Install the port using an overlay: `vcpkg install --overlay-ports=/path/to/your/overlay` 
 
-* **Register Version** `vcpkg x-add-version mylib`  
+* **Register Version** `vcpkg x-add-version collection`  
   `git -C $VCPKG_ROOT/ports ls-tree --format='%(objectname)' HEAD -- curl`
 * **Submit PR to Official vcpkg**
 
@@ -143,13 +143,13 @@ doxygen && open docs/index.html # To re-generate docs
   * Update `vcpkg.json` version on vcpkg repository.
   * Update portfile.cmake `SHA512`
     ```shell
-    shasum -a 512 /path/to/mylib.tar.gz
-    vcpkg hash /path/to/mylib-1.0.0.tar.gz
-    curl -L https://github.com/username/mylib/archive/refs/tags/1.1.0.tar.gz | sha512sum
+    shasum -a 512 /path/to/collection.tar.gz
+    vcpkg hash /path/to/collection-1.0.0.tar.gz
+    curl -L https://github.com/open-source-patterns/collection/archive/refs/tags/1.1.0.tar.gz | sha512sum
     ```
 
-* **Register Version**  
-  `vcpkg x-add-version mylib --overwrite-version`  
+* **Update version**  
+  `vcpkg x-add-version collection --overwrite-version`  
   `git -C $VCPKG_ROOT/ports ls-tree --format='%(objectname)' HEAD -- curl`  
   This updates version metadata and links the correct git tree.
 ---

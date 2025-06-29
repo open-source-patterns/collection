@@ -8,7 +8,7 @@
 #include "idictionary.h"
 
 #ifdef __cplusplus
-}
+extern "C" {
 #endif
 
 /**
