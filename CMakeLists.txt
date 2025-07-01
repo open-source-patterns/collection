@@ -73,6 +73,7 @@ install(FILES
 # 6️⃣ Tests
 option(BUILD_TESTS "Build Tests" OFF) # -DBUILD_TESTS=ON
 if (BUILD_TESTS)
+    message(STATUS "[Tests] BUILD_TESTS is ON — configuring test targets")
     enable_testing()
     add_subdirectory(test)
 endif ()

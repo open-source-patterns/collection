@@ -1,5 +1,3 @@
-message(STATUS "[Tests] BUILD_TESTS is ON — configuring test targets")
-
 add_executable(array_test test_array.c)
 target_link_libraries(array_test PRIVATE collection)
 add_test(NAME Collection.ArrayTest COMMAND array_test)
