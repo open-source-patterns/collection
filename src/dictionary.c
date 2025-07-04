@@ -177,7 +177,7 @@ static void clear(const struct IDictionary *self, void (*callback)(void *value))
 }
 
 // 🔧 Initialize dictionary base functions
-struct Dictionary *collection_dictionary_init(struct Dictionary *dictionary) {
+static struct Dictionary *collection_dictionary_init(struct Dictionary *dictionary) {
     if (dictionary == NULL) return NULL;
     mutex_init(&mutex);
     dictionary->base.get = get;
@@ -190,7 +190,7 @@ struct Dictionary *collection_dictionary_init(struct Dictionary *dictionary) {
 }
 
 // 🆕 Allocate and initialize new dictionary
-struct Dictionary *collection_dictionary_alloc() {
+static struct Dictionary *collection_dictionary_alloc() {
     struct Dictionary *dictionary = malloc(sizeof(struct Dictionary));
     if (dictionary == NULL) {
         fprintf(stderr, "Dictionary allocation failed.\n");

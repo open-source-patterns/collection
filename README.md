@@ -73,7 +73,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build .
 ctest -C Release
 
-brew install doxygen && doxygen -g 
+brew install doxygen && doxygen -g # Installation and setup
 doxygen && open docs/index.html # To re-generate docs
  ```
 ---

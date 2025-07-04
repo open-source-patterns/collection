@@ -200,7 +200,7 @@ static void clear(struct IArray *self, void (*callback)(void *item)) {
 }
 
 // 🔧 Initialize array base function pointers
-struct Array *collection_array_init(struct Array *array) {
+static struct Array *collection_array_init(struct Array *array) {
     if (array == NULL) return NULL;
     mutex_init(&mutex);
     array->list = NULL;
@@ -217,7 +217,7 @@ struct Array *collection_array_init(struct Array *array) {
 }
 
 // 🆕 Allocate new Array instance
-struct Array *collection_array_alloc() {
+static struct Array *collection_array_alloc() {
     struct Array *array = malloc(sizeof(struct Array));
     if (array == NULL) {
         fprintf(stderr, "Array allocation failed.\n");

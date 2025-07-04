@@ -115,8 +115,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a411ca89a52955c4b3aba20f2a85580ee" id="r_a411ca89a52955c4b3aba20f2a85580ee"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="struct_i_array.html">IArray</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a411ca89a52955c4b3aba20f2a85580ee">clone</a> (const struct <a class="el" href="struct_i_array.html">IArray</a> *self)</td></tr>
 <tr class="memitem:ad4c02fa50fb0ae2a27af5996257e12c7" id="r_ad4c02fa50fb0ae2a27af5996257e12c7"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4c02fa50fb0ae2a27af5996257e12c7">size</a> (const struct <a class="el" href="struct_i_array.html">IArray</a> *self)</td></tr>
 <tr class="memitem:abacdf77f33954020b784d489298f0fe3" id="r_abacdf77f33954020b784d489298f0fe3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abacdf77f33954020b784d489298f0fe3">clear</a> (struct <a class="el" href="struct_i_array.html">IArray</a> *self, void(*callback)(void *item))</td></tr>
-<tr class="memitem:a41fd7f629802f849a36401481e508920" id="r_a41fd7f629802f849a36401481e508920"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_array.html">Array</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41fd7f629802f849a36401481e508920">collection_array_init</a> (struct <a class="el" href="struct_array.html">Array</a> *array)</td></tr>
-<tr class="memitem:a1c9f6e034e59ce2c3e650e6b8f110471" id="r_a1c9f6e034e59ce2c3e650e6b8f110471"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_array.html">Array</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c9f6e034e59ce2c3e650e6b8f110471">collection_array_alloc</a> ()</td></tr>
+<tr class="memitem:a0ac5ee321c9f3fda44a2e5bc84e418a7" id="r_a0ac5ee321c9f3fda44a2e5bc84e418a7"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="struct_array.html">Array</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ac5ee321c9f3fda44a2e5bc84e418a7">collection_array_init</a> (struct <a class="el" href="struct_array.html">Array</a> *array)</td></tr>
+<tr class="memitem:ad429272c93e3da028c28fd0194b8118f" id="r_ad429272c93e3da028c28fd0194b8118f"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="struct_array.html">Array</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad429272c93e3da028c28fd0194b8118f">collection_array_alloc</a> ()</td></tr>
 <tr class="memitem:a8efc84b25a65825131482b92d8de2bcc" id="r_a8efc84b25a65825131482b92d8de2bcc"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="struct_i_array.html">IArray</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8efc84b25a65825131482b92d8de2bcc">collection_array_new</a> ()</td></tr>
 <tr class="memdesc:a8efc84b25a65825131482b92d8de2bcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new <a class="el" href="struct_i_array.html" title="Interface for a thread-safe, generic, singly linked list.">IArray</a> instance (heap-allocated).  <br /></td></tr>
 <tr class="memitem:a13491f7aa1cf775b11dbfad5e81d9931" id="r_a13491f7aa1cf775b11dbfad5e81d9931"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13491f7aa1cf775b11dbfad5e81d9931">collection_array_free</a> (struct <a class="el" href="struct_i_array.html">IArray</a> **array)</td></tr>
@@ -181,11 +181,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a1c9f6e034e59ce2c3e650e6b8f110471" name="a1c9f6e034e59ce2c3e650e6b8f110471"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c9f6e034e59ce2c3e650e6b8f110471">&#9670;&#160;</a></span>collection_array_alloc()</h2>
+<a id="ad429272c93e3da028c28fd0194b8118f" name="ad429272c93e3da028c28fd0194b8118f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad429272c93e3da028c28fd0194b8118f">&#9670;&#160;</a></span>collection_array_alloc()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">struct <a class="el" href="struct_array.html">Array</a> * collection_array_alloc </td>
@@ -194,6 +197,11 @@ Variables</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -223,11 +231,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a41fd7f629802f849a36401481e508920" name="a41fd7f629802f849a36401481e508920"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41fd7f629802f849a36401481e508920">&#9670;&#160;</a></span>collection_array_init()</h2>
+<a id="a0ac5ee321c9f3fda44a2e5bc84e418a7" name="a0ac5ee321c9f3fda44a2e5bc84e418a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ac5ee321c9f3fda44a2e5bc84e418a7">&#9670;&#160;</a></span>collection_array_init()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">struct <a class="el" href="struct_array.html">Array</a> * collection_array_init </td>
@@ -236,6 +247,11 @@ Variables</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
