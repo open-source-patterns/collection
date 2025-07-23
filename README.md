@@ -136,7 +136,7 @@ doxygen && open docs/index.html # To re-generate docs
 ### 🔄 Update an Existing vcpkg Port
 
 * **Update Your Library**: 
-  * Bump version in `vcpkg.json`, `CMakeLists.txt`, and `CHANGELOG.md`
+  * Bump a version in `vcpkg.json`, `CMakeLists.txt`, and `CHANGELOG.md`
   * Tag the release: `git tag v1.1.0 && git push origin v1.1.0`
 
 * **Update vcpkg Port**

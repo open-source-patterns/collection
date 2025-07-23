@@ -7,29 +7,46 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # 2️⃣ Define targets
-add_library(collection STATIC src/array.c src/dictionary.c)
+add_library(collection STATIC)
+target_sources(collection
+        PRIVATE
+            src/array.c
+            src/dictionary.c
+        PUBLIC
+            FILE_SET HEADERS
+            BASE_DIRS include/collection
+            FILES
+                include/collection/array.h
+                include/collection/dictionary.h)
 add_library(collection::collection ALIAS collection)
 
-target_include_directories(collection
-        PUBLIC
-            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include> # generated headers
-            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> # public headers
-            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> # installed headers
-        PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/src) # private headers
+#target_include_directories(collection
+#        PUBLIC
+#            $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include> # generated headers
+#            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> # public headers
+#            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> # installed headers
+#        PRIVATE
+#            ${CMAKE_CURRENT_SOURCE_DIR}/src) # private headers
 
-option(STRICT_GLOBAL "Apply strict compile options globally" OFF) # -DSTRICT_GLOBAL=ON
-if (STRICT_GLOBAL AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "AppleClang") AND NOT WIN32)
-    message(STATUS "[Debug Flags] Debug build with supported compiler — enabling -Wall -Werror")
-    add_compile_options(-Wall -Werror)
-endif ()
 
-option(ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF) # -DENABLE_SANITIZERS=ON
-if (ENABLE_SANITIZERS AND NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "[Sanitizers] ENABLE_SANITIZERS is ON — adding AddressSanitizer and UndefinedBehaviorSanitizer flags")
-    add_compile_options(-fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fno-omit-frame-pointer)
-    add_link_options(-fsanitize=address -fsanitize=undefined)
-endif ()
+# Use CI flags
+# cmake -B build \
+#  -DCMAKE_C_FLAGS="-Wall -Werror -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer" \
+#  -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
+#  -DCMAKE_BUILD_TYPE=Debug
+
+#option(STRICT_GLOBAL "Apply strict compile options globally" OFF) # -DSTRICT_GLOBAL=ON
+#if (STRICT_GLOBAL AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "AppleClang") AND NOT WIN32)
+#    message(STATUS "[Debug Flags] Debug build with supported compiler — enabling -Wall -Werror")
+#    add_compile_options(-Wall -Werror)
+#endif ()
+#
+#option(ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF) # -DENABLE_SANITIZERS=ON
+#if (ENABLE_SANITIZERS AND NOT WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    message(STATUS "[Sanitizers] ENABLE_SANITIZERS is ON — adding AddressSanitizer and UndefinedBehaviorSanitizer flags")
+#    add_compile_options(-fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fno-omit-frame-pointer)
+#    add_link_options(-fsanitize=address -fsanitize=undefined)
+#endif ()
 
 # 3️⃣ Install rules
 include(GNUInstallDirs)
@@ -39,9 +56,9 @@ install(TARGETS collection
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT collection_RunTime
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT collection_RunTime NAMELINK_COMPONENT collection_Development
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT collection_Development
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        FILE_SET HEADERS DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+# install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # 4️⃣ Export targets
 install(EXPORT collection-targets
