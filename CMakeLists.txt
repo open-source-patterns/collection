@@ -14,7 +14,7 @@ target_sources(collection
             src/dictionary.c
         PUBLIC
             FILE_SET HEADERS
-            BASE_DIRS include/collection
+            BASE_DIRS include
             FILES
                 include/collection/array.h
                 include/collection/dictionary.h)
