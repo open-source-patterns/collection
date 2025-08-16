@@ -1,0 +1,8 @@
+{
+  "name": "collection",
+  "version": "1.0.0",
+  "maintainers": ["Saad Shams"],
+  "description": "A modular C library offering generic, thread-safe data structures designed for efficient collection management.",
+  "homepage": "https://github.com/open-source-patterns/collection",
+  "license": "BSD-3-Clause"
+}
