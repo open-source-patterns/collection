@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "collection/Mutex.h"
 #include "collection/IDictionary.h"
 
 /**
@@ -33,4 +34,5 @@ struct Dictionary {
     struct DictionaryNode **buckets;    /**< 🗃️ Array of bucket heads (linked lists) */
     size_t capacity;                    /**< 📏 Number of buckets in the hash table */
     size_t size;                        /**< 📊 Number of key-value pairs stored */
+    Mutex mutex;                        /**< 🔒 Mutex for thread safety */
 };

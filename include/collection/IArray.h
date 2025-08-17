@@ -17,6 +17,23 @@
  */
 struct IArray {
     /**
+     * @brief Iterates over each item in the list.
+     * @param self Pointer to the IArray instance.
+     * @param callback Function called for each item. Receives the element, its index, and data.
+     * @param data Optional data passed to callback (e.g., notification).
+     */
+    void (*forEach)(const struct IArray *self, void (*callback)(const void *element, int index, const void *data), const void *data);
+
+    /**
+     * @brief Finds the first element in the array that matches the given predicate.
+     * @param self Pointer to the IArray instance.
+     * @param predicate Function that returns true for the desired element.
+     * @param data Optional user data passed to the predicate function.
+     * @return Pointer to the first matching element, or NULL if no match is found.
+     */
+    const void *(*find)(const struct IArray *self, bool (*predicate)(const void *element, const void *data), const void *data);
+
+    /**
      * @brief Inserts an item at the beginning of the list.
      * @param self Pointer to the IArray instance.
      * @param item Pointer to the item to insert.

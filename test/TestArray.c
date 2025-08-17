@@ -8,6 +8,59 @@ struct Test {
     struct Test *next;
 };
 
+struct Value {
+    int value;
+    struct Value *next;
+};
+
+static void testForEachCallback(const void *element, int index, const void *data) {
+    struct Value *value = (struct Value *)element;
+    const int *multiplier = data;
+    value->value *= *multiplier;
+}
+
+void testForEach() {
+    struct IArray *array = collection_array_new();
+
+    array->push(array, &(struct Value){1});
+    array->push(array, &(struct Value){2});
+    array->push(array, &(struct Value){3});
+
+    const int multiplier = 2;
+    array->forEach(array, testForEachCallback, &multiplier);
+
+    assert(((struct Value *)array->shift(array))->value == 2);
+    assert(((struct Value *)array->shift(array))->value == 4);
+    assert(((struct Value *)array->shift(array))->value == 6);
+
+    collection_array_free(&array);
+}
+
+static bool testFindCallback(const void *element, const void *data) {
+    const struct Value *value1 = element;
+    const struct Value *value2 = data;
+    return value1->value == value2->value;
+}
+
+void testFind() {
+    struct IArray *array = collection_array_new();
+
+    array->push(array, &(struct Value){1});
+    array->push(array, &(struct Value){2});
+    array->push(array, &(struct Value){3});
+
+    const struct Value *value = (struct Value *)array->find(array, testFindCallback, &(struct Value){1});
+    assert(value->value == 1);
+    value = (struct Value *) array->find(array, testFindCallback, &(struct Value){2});
+    assert(value->value == 2);
+    value = (struct Value *) array->find(array, testFindCallback, &(struct Value){3});
+    assert(value->value == 3);
+    value = (struct Value *) array->find(array, testFindCallback, &(struct Value){4});
+    assert(value == NULL);
+
+    collection_array_free(&array);
+}
+
 void testAddFirst() {
     struct IArray *array = collection_array_new();
 
@@ -217,6 +270,8 @@ void testDealloc() {
 }
 
 int main() {
+    testForEach();
+    testFind();
     testAddFirst();
     testAddLast();
     testRemoveFirst();

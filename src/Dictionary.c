@@ -3,12 +3,8 @@
 #include <stdio.h>
 
 #include "Dictionary.h"
-#include "Mutex.h"
 
 #define INITIAL_CAPACITY 16
-
-// 🔒 Mutex protecting DictionaryNode structure for thread safety
-static Mutex mutex;
 
 // 🔑 djb2 string hash function
 static unsigned long hash(const char *str) { // djb2 hash
@@ -21,8 +17,9 @@ static unsigned long hash(const char *str) { // djb2 hash
 
 // 🔍 Retrieve value by key with read-lock
 static const void *get(const struct IDictionary *self, const char *key) {
-    mutex_lock_shared(&mutex);
-    const struct Dictionary *instance = (struct Dictionary *) self;
+    struct Dictionary *instance = (struct Dictionary *) self;
+    mutex_lock_shared(&instance->mutex);
+
     const unsigned long index = hash(key) % instance->capacity;
 
     const void *value = NULL;
@@ -33,13 +30,15 @@ static const void *get(const struct IDictionary *self, const char *key) {
         }
     }
 
-    mutex_unlock(&mutex);
+    mutex_unlock(&instance->mutex);
     return value;
 }
 
 // ➕ Insert key-value pair with write-lock
 static bool put(struct IDictionary *self, const char *key, const void *value) {
-    const struct Dictionary *instance = (struct Dictionary *) self;
+    struct Dictionary *instance = (struct Dictionary *) self;
+    mutex_lock(&instance->mutex);
+
     const unsigned long index = hash(key) % instance->capacity;
 
     struct DictionaryNode *DictionaryNode = malloc(sizeof(struct DictionaryNode));
@@ -52,23 +51,20 @@ static bool put(struct IDictionary *self, const char *key, const void *value) {
     DictionaryNode->value = value;
     DictionaryNode->next = NULL;
 
-    mutex_lock(&mutex);
-
     // 🔗 Append new DictionaryNode to bucket's linked list
     struct DictionaryNode **cursor;
     for(cursor = &instance->buckets[index]; *cursor; cursor = &(*cursor)->next) {}
     *cursor = DictionaryNode;
 
-    mutex_unlock(&mutex);
-
+    mutex_unlock(&instance->mutex);
     return true;
 }
 
 // 🔎 Check existence of key with read-lock
 static bool containsKey(const struct IDictionary *self, const char *key) {
-    mutex_lock_shared(&mutex);
+    struct Dictionary *instance = (struct Dictionary *)self;
+    mutex_lock_shared(&instance->mutex);
 
-    const struct Dictionary *instance = (const struct Dictionary *)self;
     const unsigned long index = hash(key) % instance->capacity;
 
     bool found = false;
@@ -79,15 +75,15 @@ static bool containsKey(const struct IDictionary *self, const char *key) {
         }
     }
 
-    mutex_unlock(&mutex);
+    mutex_unlock(&instance->mutex);
     return found;
 }
 
 // Remove key and return associated value with write-lock
 void *removeItem(struct IDictionary *self, const char *key) {
-    mutex_lock(&mutex);
+    struct Dictionary *instance = (struct Dictionary *) self;
+    mutex_lock(&instance->mutex);
 
-    const struct Dictionary *instance = (struct Dictionary *) self;
     const unsigned long index = hash(key) % instance->capacity;
     void *value = NULL;
 
@@ -103,14 +99,15 @@ void *removeItem(struct IDictionary *self, const char *key) {
         }
     }
 
-    mutex_unlock(&mutex);
+    mutex_unlock(&instance->mutex);
     return value; // 🔍 Not found
 }
 
 // 🔄 Replace value of existing key with write-lock
 static void *replace(const struct IDictionary *self, const char *key, const void *value) {
-    mutex_lock(&mutex); // 🔒 Acquire write-lock for safe mutation
-    const struct Dictionary *instance = (struct Dictionary *)self;
+    struct Dictionary *instance = (struct Dictionary *)self;
+    mutex_lock(&instance->mutex);
+
     const unsigned long index = hash(key) % instance->capacity;
     void *oldValue = NULL;
 
@@ -124,14 +121,15 @@ static void *replace(const struct IDictionary *self, const char *key, const void
         }
     }
 
-    mutex_unlock(&mutex);
+    mutex_unlock(&instance->mutex);
     return oldValue; // 🔍 Not found
 }
 
 // 🧹 Clear all entries with write-lock, optional callback on each value
 static void clear(const struct IDictionary *self, void (*callback)(void *value)) {
-    mutex_lock(&mutex);
     struct Dictionary *instance = (struct Dictionary *)self;
+    mutex_lock(&instance->mutex);
+
     for (size_t i = 0; i < instance->capacity; ++i) {
         struct DictionaryNode *current = instance->buckets[i];
         while (current != NULL) {
@@ -145,13 +143,14 @@ static void clear(const struct IDictionary *self, void (*callback)(void *value))
     }
     free(instance->buckets); // 🧹 Free DictionaryNode array
     instance->buckets = NULL;
-    mutex_unlock(&mutex);
+
+    mutex_unlock(&instance->mutex);
 }
 
 // 🔧 Initialize dictionary base functions
 static struct Dictionary *collection_dictionary_init(struct Dictionary *dictionary) {
     if (dictionary == NULL) return NULL;
-    mutex_init(&mutex);
+    mutex_init(&dictionary->mutex);
     dictionary->base.get = get;
     dictionary->base.put = put;
     dictionary->base.containsKey = containsKey;
@@ -184,7 +183,11 @@ struct IDictionary *collection_dictionary_new() {
 
 // 🧹 Free dictionary instance (note: DictionaryNode entries already freed by clear)
 void collection_dictionary_free(struct IDictionary **dictionary) {
-    mutex_destroy(&mutex);
+    if (dictionary == NULL || *dictionary == NULL) return;
+
+    struct Dictionary *instance = (struct Dictionary *)*dictionary;
+    mutex_destroy(&instance->mutex);
     free(*dictionary);
+
     *dictionary = NULL;
 }

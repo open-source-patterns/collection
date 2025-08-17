@@ -9,6 +9,7 @@
  */
 #pragma once
 
+#include "collection/Mutex.h"
 #include "collection/IArray.h"
 
 /**
@@ -31,4 +32,5 @@ struct ArrayNode {
 struct Array {
     struct IArray base;             /**< 🧩 Base interface for array operations */
     struct ArrayNode *list;         /**< 🗃️ Head of the singly linked ArrayNode */
+    Mutex mutex;                   /**< 🔒 Mutex for thread safety */
 };
