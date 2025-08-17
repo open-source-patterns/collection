@@ -1,0 +1,23 @@
+add_executable(ExampleArrayBasic ExampleArrayBasic.c)
+target_link_libraries(ExampleArrayBasic PRIVATE collection::collection)
+add_test(NAME Collection.Example.ArrayBasic COMMAND ExampleArrayBasic)
+
+add_executable(ExampleArrayClone ExampleArrayClone.c)
+target_link_libraries(ExampleArrayClone PRIVATE collection::collection)
+add_test(NAME Collection.Example.ArrayClone COMMAND ExampleArrayClone)
+
+add_executable(ExampleArrayRemove ExampleArrayRemove.c)
+target_link_libraries(ExampleArrayRemove PRIVATE collection::collection)
+add_test(NAME Collection.Example.ArrayRemove COMMAND ExampleArrayRemove)
+
+add_executable(ExampleDictionaryBasic ExampleDictionaryBasic.c)
+target_link_libraries(ExampleDictionaryBasic PRIVATE collection::collection)
+add_test(NAME Collection.Example.DictionaryBasic COMMAND ExampleDictionaryBasic)
+
+add_executable(ExampleDictionaryRemove ExampleDictionaryRemove.c)
+target_link_libraries(ExampleDictionaryRemove PRIVATE collection::collection)
+add_test(NAME Collection.Example.DictionaryRemove COMMAND ExampleDictionaryRemove)
+
+add_executable(ExampleDictionaryReplace ExampleDictionaryReplace.c)
+target_link_libraries(ExampleDictionaryReplace PRIVATE collection::collection)
+add_test(NAME Collection.Example.DictionaryReplace COMMAND ExampleDictionaryReplace)
