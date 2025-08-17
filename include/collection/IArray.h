@@ -16,6 +16,8 @@
  * @brief Interface for a thread-safe, generic, singly linked list.
  */
 struct IArray {
+    const void *(*get)(const struct IArray *self, const int n);
+
     /**
      * @brief Iterates over each item in the list.
      * @param self Pointer to the IArray instance.

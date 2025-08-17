@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "collection/IArray.h"
 
@@ -12,6 +13,22 @@ struct Value {
     int value;
     struct Value *next;
 };
+
+static void testGet() {
+    struct IArray *array = collection_array_new();
+
+    array->push(array, &(struct Test){"name0"});
+    array->push(array, &(struct Test){"name1"});
+    array->push(array, &(struct Test){"name2"});
+    array->push(array, &(struct Test){"name3"});
+    array->push(array, &(struct Test){"name4"});
+
+    assert(strcmp(((struct Test*)array->get(array, 0))->name, "name0") == 0);
+    assert(strcmp(((struct Test*)array->get(array, 1))->name, "name1") == 0);
+    assert(strcmp(((struct Test*)array->get(array, 2))->name, "name2") == 0);
+    assert(strcmp(((struct Test*)array->get(array, 3))->name, "name3") == 0);
+    assert(strcmp(((struct Test*)array->get(array, 4))->name, "name4") == 0);
+}
 
 static void testForEachCallback(const void *element, int index, const void *data) {
     struct Value *value = (struct Value *)element;
@@ -270,6 +287,7 @@ void testDealloc() {
 }
 
 int main() {
+    testGet();
     testForEach();
     testFind();
     testAddFirst();

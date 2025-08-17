@@ -4,6 +4,25 @@
 
 #include "Array.h"
 
+// 📌 Access element at given index, or NULL if out of range
+static const void *get(const struct IArray *self, const int n) {
+    if (self == NULL || n < 0) return NULL;
+
+    struct Array *instance = (struct Array *) self;
+    mutex_lock_shared(&instance->mutex);
+
+    int index = 0;
+    for (const struct ArrayNode *cursor = instance->list; cursor; cursor = cursor->next, index++) {
+        if (index == n) {
+            mutex_unlock(&instance->mutex);
+            return cursor->item;
+        }
+    }
+
+    mutex_unlock(&instance->mutex);
+    return NULL;
+}
+
 // 🔄 Iteration calling callback on each element with its index
 static void forEach(const struct IArray *self, void (*callback)(const void *element, int index, const void *data), const void *data) {
     struct Array *instance = (struct Array *) self;
@@ -207,6 +226,7 @@ static struct Array *collection_array_init(struct Array *array) {
     if (array == NULL) return NULL;
     mutex_init(&array->mutex);
     array->list = NULL;
+    array->base.get = get;
     array->base.forEach = forEach;
     array->base.find = find;
     array->base.unshift = unshift;
