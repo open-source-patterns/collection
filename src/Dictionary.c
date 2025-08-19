@@ -17,7 +17,7 @@ static unsigned long hash(const char *str) { // djb2 hash
 
 // 🔍 Retrieve value by key with read-lock
 static const void *get(const struct IDictionary *self, const char *key) {
-    struct Dictionary *this = (struct Dictionary *)self;
+    struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock_shared(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
@@ -36,7 +36,7 @@ static const void *get(const struct IDictionary *self, const char *key) {
 
 // ➕ Insert key-value pair with write-lock
 static bool put(struct IDictionary *self, const char *key, const void *value) {
-    struct Dictionary *this = (struct Dictionary *)self;
+    struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
@@ -62,7 +62,7 @@ static bool put(struct IDictionary *self, const char *key, const void *value) {
 
 // 🔎 Check existence of key with read-lock
 static bool containsKey(const struct IDictionary *self, const char *key) {
-    struct Dictionary *this = (struct Dictionary *)self;
+    struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock_shared(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
@@ -81,7 +81,7 @@ static bool containsKey(const struct IDictionary *self, const char *key) {
 
 // Remove key and return associated value with write-lock
 void *removeItem(struct IDictionary *self, const char *key) {
-    struct Dictionary *this = (struct Dictionary *)self;
+    struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
@@ -105,7 +105,7 @@ void *removeItem(struct IDictionary *self, const char *key) {
 
 // 🔄 Replace value of existing key with write-lock
 static void *replace(const struct IDictionary *self, const char *key, const void *value) {
-    struct Dictionary *this = (struct Dictionary *)self;
+    struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
@@ -127,7 +127,7 @@ static void *replace(const struct IDictionary *self, const char *key, const void
 
 // 🧹 Clear all entries with write-lock, optional callback on each value
 static void clear(const struct IDictionary *self, void (*callback)(void *value)) {
-    struct Dictionary *this = (struct Dictionary *)self;
+    struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
 
     for (size_t i = 0; i < this->capacity; ++i) {

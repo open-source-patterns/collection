@@ -8,7 +8,7 @@
 static const void *get(const struct IArray *self, const int n) {
     if (self == NULL || n < 0) return NULL;
 
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex);
 
     int index = 0;
@@ -25,7 +25,7 @@ static const void *get(const struct IArray *self, const int n) {
 
 // 🔄 Iteration calling callback on each element with its index
 static void forEach(const struct IArray *self, void (*callback)(const void *element, int index, const void *data), const void *data) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex);
 
     int index = 0;
@@ -38,7 +38,7 @@ static void forEach(const struct IArray *self, void (*callback)(const void *elem
 
 // 🔍 Search returning the first element matching the predicate
 static const void *find(const struct IArray *self, bool (*predicate)(const void *element, const void *data), const void *data) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex);
 
     for (const struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next) {
@@ -54,7 +54,7 @@ static const void *find(const struct IArray *self, bool (*predicate)(const void 
 
 // ➕ Insert item at head (unshift)
 static const void *unshift(struct IArray *self, const void *item) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
     if (ArrayNode == NULL) {
         fprintf(stderr, "ArrayNode allocation failed.\n");
@@ -73,7 +73,7 @@ static const void *unshift(struct IArray *self, const void *item) {
 
 // ➕ Append item at tail (push)
 static const void *push(struct IArray *self, const void *item) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
     if (ArrayNode == NULL) {
         fprintf(stderr, "ArrayNode allocation failed.\n");
@@ -95,7 +95,7 @@ static const void *push(struct IArray *self, const void *item) {
 
 // 🔎 Check if ArrayNode contains item
 static bool containsValue(const struct IArray *self, const void *item) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex);
 
     bool found = false;
@@ -112,7 +112,7 @@ static bool containsValue(const struct IArray *self, const void *item) {
 
 // ❌ Remove and return first item (shift)
 static const void *shift(struct IArray *self) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock(&this->mutex);
 
     struct ArrayNode *ArrayNode = this->list;
@@ -129,7 +129,7 @@ static const void *shift(struct IArray *self) {
 
 // ❌ Remove and return last item (pop)
 static const void *pop(struct IArray *self) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock(&this->mutex);
 
     struct ArrayNode **cursor;
@@ -149,7 +149,7 @@ static const void *pop(struct IArray *self) {
 
 // ❌ Remove first matching item, return item pointer
 static void *removeItem(struct IArray *self, const void *item) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock(&this->mutex);
 
     void *data = NULL;
@@ -170,7 +170,7 @@ static void *removeItem(struct IArray *self, const void *item) {
 
 // 🆚 Clone the ArrayNode (shallow copy)
 static struct IArray *clone(const struct IArray *self) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex); // 🔒 Acquire read lock
 
     struct ArrayNode *copy = NULL;
@@ -196,11 +196,11 @@ static struct IArray *clone(const struct IArray *self) {
 
 // 🔢 Count number of items with read-lock
 static int size(const struct IArray *self) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex);
 
     int count = 0;
-    for (const struct ArrayNode *cursor = ((struct Array *)self)->list; cursor; cursor = cursor->next, count++) {}
+    for (const struct ArrayNode *cursor = ((struct Array *) self)->list; cursor; cursor = cursor->next, count++) {}
 
     mutex_unlock(&this->mutex);
     return count;
@@ -208,10 +208,10 @@ static int size(const struct IArray *self) {
 
 // 🧹 Clear the ArrayNode, optional callback for each item
 static void clear(struct IArray *self, void (*callback)(void *item)) {
-    struct Array *this = (struct Array *)self;
+    struct Array *this = (struct Array *) self;
     mutex_lock(&this->mutex);
 
-    for (struct ArrayNode **cursor = &((struct Array *)self)->list; *cursor;) {
+    for (struct ArrayNode **cursor = &((struct Array *) self)->list; *cursor;) {
         struct ArrayNode *ArrayNode = *cursor;
         *cursor = (*cursor)->next;         // 🔗 Remove ArrayNode from ArrayNode
         if (callback) callback((void *) ArrayNode->item);  // 🔔 User cleanup callback
