@@ -222,7 +222,7 @@ static void clear(struct IArray *self, void (*callback)(void *item)) {
 }
 
 // 🔧 Initialize array base function pointers
-static struct Array *collection_array_init(struct Array *array) {
+static struct Array *init(struct Array *array) {
     if (array == NULL) return NULL;
     mutex_init(&array->mutex);
     array->list = NULL;
@@ -242,7 +242,7 @@ static struct Array *collection_array_init(struct Array *array) {
 }
 
 // 🆕 Allocate new Array instance
-static struct Array *collection_array_alloc() {
+static struct Array *alloc() {
     struct Array *array = malloc(sizeof(struct Array));
     if (array == NULL) {
         fprintf(stderr, "Array allocation failed.\n");
@@ -254,7 +254,7 @@ static struct Array *collection_array_alloc() {
 
 // 🆕 Create new IArray instance
 struct IArray *collection_array_new() {
-    return (struct IArray *)collection_array_init(collection_array_alloc());
+    return (struct IArray *)init(alloc());
 }
 
 // 🧹 Free Array instance (note: ArrayNode should be cleared before free)

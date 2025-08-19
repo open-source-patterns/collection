@@ -148,7 +148,7 @@ static void clear(const struct IDictionary *self, void (*callback)(void *value))
 }
 
 // 🔧 Initialize dictionary base functions
-static struct Dictionary *collection_dictionary_init(struct Dictionary *dictionary) {
+static struct Dictionary *init(struct Dictionary *dictionary) {
     if (dictionary == NULL) return NULL;
     mutex_init(&dictionary->mutex);
     dictionary->base.get = get;
@@ -161,7 +161,7 @@ static struct Dictionary *collection_dictionary_init(struct Dictionary *dictiona
 }
 
 // 🆕 Allocate and initialize new dictionary
-static struct Dictionary *collection_dictionary_alloc() {
+static struct Dictionary *alloc() {
     struct Dictionary *dictionary = malloc(sizeof(struct Dictionary));
     if (dictionary == NULL) {
         fprintf(stderr, "Dictionary allocation failed.\n");
@@ -178,7 +178,7 @@ static struct Dictionary *collection_dictionary_alloc() {
 
 // 🆕 Create new IDictionary instance
 struct IDictionary *collection_dictionary_new() {
-    return (struct IDictionary *)collection_dictionary_init(collection_dictionary_alloc());
+    return (struct IDictionary *)init(alloc());
 }
 
 // 🧹 Free dictionary instance (note: DictionaryNode entries already freed by clear)
