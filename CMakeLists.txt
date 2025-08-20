@@ -11,12 +11,13 @@ add_library(collection STATIC
         src/Dictionary.c)
 add_library(collection::collection ALIAS collection)
 
+# 3️⃣ Target properties
 target_include_directories(collection
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:include>)
 
-# 3️⃣ Install rules
+# 4️⃣ Install rules
 include(GNUInstallDirs)
 
 install(TARGETS collection
@@ -27,13 +28,13 @@ install(TARGETS collection
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# 4️⃣ Export targets
+# 5️⃣ Export targets
 install(EXPORT collection-config
         FILE collection-config.cmake
         NAMESPACE collection::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/collection)
 
-# 6️⃣ Tests
+# 6️⃣ Tests & Examples
 option(BUILD_TESTS "Build Tests" OFF)
 if (BUILD_TESTS)
     message(STATUS "[Tests] BUILD_TESTS is ON — configuring test targets")
