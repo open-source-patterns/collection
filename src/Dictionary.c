@@ -178,14 +178,14 @@ static struct Dictionary *alloc() {
 
 // 🆕 Create new IDictionary instance
 struct IDictionary *collection_dictionary_new() {
-    return (struct IDictionary *)init(alloc());
+    return (struct IDictionary *) init(alloc());
 }
 
 // 🧹 Free dictionary instance (note: DictionaryNode entries already freed by clear)
 void collection_dictionary_free(struct IDictionary **dictionary) {
     if (dictionary == NULL || *dictionary == NULL) return;
 
-    struct Dictionary *this = (struct Dictionary *)*dictionary;
+    struct Dictionary *this = (struct Dictionary *) *dictionary;
     mutex_destroy(&this->mutex);
     free(*dictionary);
 

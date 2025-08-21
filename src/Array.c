@@ -190,7 +190,7 @@ static struct IArray *clone(const struct IArray *self) {
 
     mutex_unlock(&this->mutex);
     struct IArray *arr = collection_array_new();
-    ((struct Array *)arr)->list = copy; // 🔄 Set cloned ArrayNode head
+    ((struct Array *) arr)->list = copy; // 🔄 Set cloned ArrayNode head
     return arr;
 }
 
@@ -254,14 +254,14 @@ static struct Array *alloc() {
 
 // 🆕 Create new IArray instance
 struct IArray *collection_array_new() {
-    return (struct IArray *)init(alloc());
+    return (struct IArray *) init(alloc());
 }
 
 // 🧹 Free Array instance (note: ArrayNode should be cleared before free)
 void collection_array_free(struct IArray **array) {
     if (array == NULL || *array == NULL) return;
 
-    struct Array *this = (struct Array *)*array;
+    struct Array *this = (struct Array *) *array;
     mutex_destroy(&this->mutex);
     free(*array);
 
