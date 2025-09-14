@@ -137,7 +137,7 @@ cmake -B build \
     * Inside your local ports/ directory, create a folder named after your library containing portfile.cmake, usage and vcpkg.json
     * Edit vcpkg.json and Replace `vcpkg_from_github` with a local path override:
         `set(SOURCE_PATH "/path/to/library")`
-    * Cleanup: consumer/cmake_build-debug (File - Reload CMake Project) | consumer/vcpkg_installed | ~/.cache/vcpkg/archives | /path/to/vcpkg/packages
+    * Cleanup: `application/cmake_build-debug` (File - Reload CMake Project) | `application/vcpkg_installed` | `~/.cache/vcpkg/archives | /path/to/vcpkg/packages`
   * **Consumer**:
     * Pass the option to CMake: `-DVCPKG_OVERLAY_PORTS=/path/to/ports`
     * Install the port using an overlay: `vcpkg install --overlay-ports=/path/to/ports` 
