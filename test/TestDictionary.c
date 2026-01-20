@@ -94,6 +94,7 @@ void testRemove() {
     assert(dictionary->removeItem(dictionary, "key2") == test2);
     assert(dictionary->removeItem(dictionary, "key1") == test1);
     assert(dictionary->removeItem(dictionary, "key3") == test3);
+    assert(dictionary->removeItem(dictionary, "key4") == NULL);
 }
 
 void testDealloc() {
