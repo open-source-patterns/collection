@@ -91,12 +91,13 @@ doxygen && open docs/index.html # To re-generate docs
     * **VCPKG**:
         * In the `vcpkg/ports` directory, Edit vcpkg.json and Replace `vcpkg_from_github` with a local path override:
           `set(SOURCE_PATH "/Users/username/Documents/open-source-patterns/collection")`
-        * Cleanup: Delete `project/cmake_build-debug`, `project/vcpkg_installed`, `~/.cache/vcpkg/archives`, File → Reload CMake Project
+        * Cleanup: Delete `project/cmake_build-debug`, `project/vcpkg_installed`, `~/.cache/vcpkg/archives`, File → Reload CMake Project 
+        * Cache Cleanu[CMakeLists.txt](CMakeLists.txt)p: `/Users/username/Documents/microsoft/vcpkg/packages`, `/Users/username/Documents/microsoft/vcpkg/buildtrees`
     * **Consumer**:
-        * Configure CMake: `-DVCPKG_OVERLAY_PORTS=/Users/username/Documents/microsoft/vcpkg/ports`
+        * Configure CMake: `-DCMAKE_TOOLCHAIN_FILE=/Users/username/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_OVERLAY_PORTS=/Users/username/Documents/microsoft/vcpkg/ports`
 
-* **Register Version**
-  `vcpkg x-add-version osp-collection`
+  * **Register Version**
+    `vcpkg x-add-version osp-collection`
 
 * **Submit PR to Official vcpkg**
 
