@@ -51,12 +51,12 @@ target_link_libraries(example PRIVATE collection::collection)
 
 const char *error = NULL;
 struct IArray *array = collection_array_new(&error);
-array->push(array, "Apple");
-array->push(array, "Banana");
-array->push(array, "Orange");
+array->push(array, "Apple", &error);
+array->push(array, "Banana", &error);
+array->push(array, "Orange", &error);
 
 while (array->size(array) > 0) {
-    printf("Fruit: %s\n", (const char *)array->shift(array)); // Apple Banana Orange
+  printf("Fruit: %s\n", (const char *)array->shift(array)); // Apple Banana Orange
 }
 
 collection_array_free(&array);
@@ -69,8 +69,8 @@ collection_array_free(&array);
 
 const char *error = NULL;
 struct IDictionary *dict = collection_dictionary_new(&error);
-dict->put(dict, "name", "Alice");
-dict->put(dict, "age", "30");
+dict->put(dict, "name", "Alice", &error);
+dict->put(dict, "age", "30", &error);
 
 printf("Name: %s\n", (const char *)dict->get(dict, "name")); // Name: Alice
 dict->removeItem(dict, "age");
