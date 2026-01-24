@@ -1,6 +1,13 @@
+/**
+* @file Dictionary.c
+* @internal
+* @brief Dictionary Implementation
+*
+* @author Saad Shams https://linkedin.com/in/muizz
+* @copyright BSD 3-Clause License
+*/
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "Dictionary.h"
 
@@ -35,26 +42,24 @@ static const void *get(const struct IDictionary *self, const char *key) {
 }
 
 // ➕ Insert key-value pair with write-lock
-static bool put(struct IDictionary *self, const char *key, const void *value) {
+static bool put(struct IDictionary *self, const char *key, const void *value, const char **error) {
     struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
 
-    struct DictionaryNode *DictionaryNode = malloc(sizeof(struct DictionaryNode));
-    if (DictionaryNode == NULL) {
-        fprintf(stderr, "DictionaryNode allocation failed.\n");
-        return false;
-    }
+    struct DictionaryNode *node = malloc(sizeof(struct DictionaryNode));
+    if (node == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode.", NULL;
 
-    DictionaryNode->key = strdup(key); // 🆕 Duplicate key string for ownership
-    DictionaryNode->value = value;
-    DictionaryNode->next = NULL;
+    node->key = strdup(key); // 🆕 Duplicate key string for ownership
+    if (node->key == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode key.", NULL;
+    node->value = value;
+    node->next = NULL;
 
     // 🔗 Append new DictionaryNode to bucket's linked list
     struct DictionaryNode **cursor;
     for(cursor = &this->buckets[index]; *cursor; cursor = &(*cursor)->next) {}
-    *cursor = DictionaryNode;
+    *cursor = node;
 
     mutex_unlock(&this->mutex);
     return true;
@@ -88,13 +93,13 @@ void *removeItem(struct IDictionary *self, const char *key) {
     void *value = NULL;
 
     for (struct DictionaryNode **cursor = &this->buckets[index]; *cursor; cursor = &(*cursor)->next) {
-        struct DictionaryNode *DictionaryNode = *cursor;
-        if (strcmp(DictionaryNode->key, key) == 0) {
-            *cursor = DictionaryNode->next;       // 🔗 Remove DictionaryNode from list
-            value = (void *)DictionaryNode->value;
+        struct DictionaryNode *node = *cursor;
+        if (strcmp(node->key, key) == 0) {
+            *cursor = node->next;       // 🔗 Remove DictionaryNode from list
+            value = (void *)node->value;
 
-            free((void *) DictionaryNode->key);   // 🧹 Free duplicated key
-            free(DictionaryNode);                 // 🧹 Free DictionaryNode
+            free((void *) node->key);   // 🧹 Free duplicated key
+            free(node);                 // 🧹 Free DictionaryNode
             break;
         }
     }
@@ -133,11 +138,11 @@ static void clear(const struct IDictionary *self, void (*callback)(void *value))
     for (size_t i = 0; i < this->capacity; ++i) {
         struct DictionaryNode *current = this->buckets[i];
         while (current != NULL) {
-            struct DictionaryNode *DictionaryNode = current;
+            struct DictionaryNode *node = current;
             current = current->next;
-            free((void *) DictionaryNode->key); // 🧹 Free key
-            if (callback) callback((void *) DictionaryNode->value); // 🔔 User cleanup
-            free(DictionaryNode); // 🧹 Free DictionaryNode
+            free((void *) node->key); // 🧹 Free key
+            if (callback) callback((void *) node->value); // 🔔 User cleanup
+            free(node); // 🧹 Free DictionaryNode
         }
         this->buckets[i] = NULL; // 🔄 Reset bucket pointer
     }
@@ -161,12 +166,9 @@ static struct Dictionary *init(struct Dictionary *dictionary) {
 }
 
 // 🆕 Allocate and initialize new dictionary
-static struct Dictionary *alloc() {
+static struct Dictionary *alloc(const char **error) {
     struct Dictionary *dictionary = malloc(sizeof(struct Dictionary));
-    if (dictionary == NULL) {
-        fprintf(stderr, "Dictionary allocation failed.\n");
-        return NULL;
-    }
+    if (dictionary == NULL) return *error = "[Collection::Dictionary::alloc] Error: Failed to allocate Dictionary.", NULL;
 
     memset(dictionary, 0, sizeof(struct Dictionary));
 
@@ -177,8 +179,8 @@ static struct Dictionary *alloc() {
 }
 
 // 🆕 Create new IDictionary instance
-struct IDictionary *collection_dictionary_new() {
-    return (struct IDictionary *) init(alloc());
+struct IDictionary *collection_dictionary_new(const char **error) {
+    return (struct IDictionary *) init(alloc(error));
 }
 
 // 🧹 Free dictionary instance (note: DictionaryNode entries already freed by clear)

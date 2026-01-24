@@ -1,12 +1,16 @@
 /**
- * @file iarray.h
- * @brief Interface definitions for a generic thread-safe singly linked list (IArray).
+ * @file IArray.h
+ * @ingroup Collection
+ * @brief Array Interface
  *
  * Defines the IArray interface and the List node structure,
  * providing function pointers for list manipulation operations
  * such as push, pop, shift, unshift, contains, clone, and clear.
  *
  * Designed for concurrent access with thread-safety expected from implementations.
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
  */
 #pragma once
 
@@ -21,10 +25,11 @@ struct IArray {
     /**
      * @brief Iterates over each item in the list.
      * @param self Pointer to the IArray instance.
-     * @param callback Function called for each item. Receives the element, its index, and data.
+     * @param callback Function called for each item. Receives the element, data and out-param error.
      * @param data Optional data passed to callback (e.g., notification).
+     * @param error Out-param for a static error string on failure (NULL on success).
      */
-    void (*forEach)(const struct IArray *self, void (*callback)(const void *element, int index, const void *data), const void *data);
+    void (*forEach)(const struct IArray *self, void (*callback)(const void *element, const void *data, const char **error), const void *data, const char **error);
 
     /**
      * @brief Finds the first element in the array that matches the given predicate.
@@ -39,17 +44,19 @@ struct IArray {
      * @brief Inserts an item at the beginning of the list.
      * @param self Pointer to the IArray instance.
      * @param item Pointer to the item to insert.
+     * @param error Out-param for a static error string on failure (NULL on success).
      * @return The inserted item pointer on success, or NULL on failure.
      */
-    const void *(*unshift)(struct IArray *self, const void *item);
+    const void *(*unshift)(struct IArray *self, const void *item, const char **error);
 
     /**
      * @brief Appends an item at the end of the list.
      * @param self Pointer to the IArray instance.
      * @param item Pointer to the item to append.
+     * @param error Out-param for a static error string on failure (NULL on success).
      * @return The appended item pointer on success, or NULL on failure.
      */
-    const void *(*push)(struct IArray *self, const void *item);
+    const void *(*push)(struct IArray *self, const void *item, const char **error);
 
     /**
      * @brief Checks if the list contains a specific item.
@@ -84,9 +91,10 @@ struct IArray {
     /**
      * @brief Clones the list (shallow copy).
      * @param self Pointer to the IArray instance.
+     * @param error Out-param for a static error string on failure (NULL on success).
      * @return A new IArray instance that is a shallow copy of the original, or NULL on failure.
      */
-    struct IArray *(*clone)(const struct IArray *self);
+    struct IArray *(*clone)(const struct IArray *self, const char **error);
 
     /**
      * @brief Returns the number of items in the list.
@@ -105,9 +113,10 @@ struct IArray {
 
 /**
  * @brief Creates a new IArray instance (heap-allocated).
+ * @param error Out-param for a static error string on failure (NULL on success).
  * @return Initialized IArray pointer, or NULL on failure.
  */
-struct IArray *collection_array_new();
+struct IArray *collection_array_new(const char **error);
 
 /**
  * @brief Frees a heap-allocated IArray.

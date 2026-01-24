@@ -1,10 +1,20 @@
+/**
+* @file ExampleDictionaryReplace.c
+ * @brief Dictionary Replace Item Example
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
+ */
 #include <stdio.h>
 #include "collection/IDictionary.h"
 
 int main() {
-    struct IDictionary *dict = collection_dictionary_new();
+    const char *error = NULL;
+    struct IDictionary *dict = collection_dictionary_new(&error);
+    if (error != NULL) return fprintf(stderr, "%s\n", error), 1;
 
-    dict->put(dict, "city", "New York");
+    dict->put(dict, "city", "New York", &error);
+    if (error != NULL) return fprintf(stderr, "%s\n", error), 1;
 
     if (dict->containsKey(dict, "city")) {
         printf("City exists\n");

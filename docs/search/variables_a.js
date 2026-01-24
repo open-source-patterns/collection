@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['shift_0',['shift',['../struct_i_array.html#afe061b5887fec64e44de0f9bac7fb145',1,'IArray']]],
-  ['size_1',['size',['../struct_i_array.html#a3f090b8b8847992b199cbf9a78525108',1,'IArray::size'],['../struct_dictionary.html#a30bbe791c57ae21169a4b7d2c44798e8',1,'Dictionary::size']]]
+  ['removeitem_0',['removeItem',['../struct_i_array.html#ade5a444f2ad61fcc9f6cd002e37db766',1,'IArray::removeItem'],['../struct_i_dictionary.html#aae5d0e6f88d7e00eede0009ed0c44a21',1,'IDictionary::removeItem']]],
+  ['replace_1',['replace',['../struct_i_dictionary.html#ac21735cceab404c829738b543cd1cb1a',1,'IDictionary']]]
 ];

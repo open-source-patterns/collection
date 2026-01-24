@@ -1,6 +1,7 @@
 /**
  * @file IDictionary.h
- * @brief Interface definition for a generic key-value dictionary.
+ * @ingroup Collection
+ * @brief Dictionary Interface
  *
  * This header declares the IDictionary struct, which provides
  * an abstract interface for managing string-keyed collections
@@ -9,8 +10,10 @@
  *
  * Implementations of this interface can vary in storage and
  * performance characteristics but share this common API.
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
  */
-
 #pragma once
 
 #include <stdbool.h>
@@ -36,9 +39,10 @@ struct IDictionary {
      * @param self Pointer to the dictionary instance.
      * @param key Null-terminated string key to add or update.
      * @param value Pointer to the value to associate with the key.
+     * @param error Out-param for a static error string on failure (NULL on success).
      * @return true if insertion or update was successful; false on failure (e.g. memory allocation failure).
      */
-    bool (*put)(struct IDictionary *self, const char *key, const void *value);
+    bool (*put)(struct IDictionary *self, const char *key, const void *value, const char **error);
 
     /**
      * @brief Checks whether the dictionary contains a given key.
@@ -84,11 +88,10 @@ struct IDictionary {
  * @brief Creates a new instance of an IDictionary implementation.
  *
  * Allocates and initializes a new dictionary object.
- *
- * @return Pointer to the newly created IDictionary instance.
- *         Returns NULL if allocation fails.
+ * @param error Out-param for a static error string on failure (NULL on success).
+ * @return Pointer to the newly created IDictionary instance. Returns NULL if allocation fails.
  */
-struct IDictionary *collection_dictionary_new();
+struct IDictionary *collection_dictionary_new(const char **error);
 
 /**
  * @brief Frees an IDictionary instance and releases its resources.
