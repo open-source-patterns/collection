@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.1] - 2026-01-23
+## [1.0.1] - 2026-01-26
 ### Added
 - In-out error parameters for memory allocation functions
 - Unit tests for `Mutex`

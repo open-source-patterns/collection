@@ -104,15 +104,15 @@ doxygen && open docs/index.html # To re-generate docs
 
 * **Update Your Library**:
     * Bump a version in `vcpkg.json`, `CMakeLists.txt`, and `CHANGELOG.md`
-    * Tag the release: `git tag v1.1.0 && git push origin v1.1.0`
+    * Tag the release: `git tag v1.0.1 && git push origin v1.0.1`
 
-* **Update vcpkg Port**
-    * Update `vcpkg.json` version on vcpkg repository.
-    * Update portfile.cmake `SHA512`
+* **Update VCPKG Port**1
+    * Update `vcpkg.json` version on VCPKG repository.
+    * Update portfile.cmake: Update SHA512 and revert to vcpkg_from_github
       ```shell
       shasum -a 512 /path/to/collection.tar.gz
-      vcpkg hash /path/to/collection-1.0.0.tar.gz
-      curl -L https://github.com/open-source-patterns/collection/archive/refs/tags/1.0.0.tar.gz | sha512sum
+      vcpkg hash /path/to/collection-1.0.1.tar.gz
+      curl -L https://github.com/open-source-patterns/collection/archive/refs/tags/1.0.1.tar.gz | sha512sum
       ```
 
 * **Update version**  
