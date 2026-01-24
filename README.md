@@ -25,7 +25,7 @@
 [API Docs](https://open-source-patterns.github.io/collection)
 
 ### 📦 Installation
-Add `"collection"` to the `dependencies` array in your `vcpkg.json` file, then run: `vcpkg install`
+Add `"osp-collection"` to the `dependencies` array in your `vcpkg.json` file, then run: `vcpkg install`
 
 ## 📚 Usage
 
