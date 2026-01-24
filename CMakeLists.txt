@@ -5,13 +5,13 @@ project(collection VERSION 1.0.1 LANGUAGES C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# 2️⃣ Define targets
+# 2️⃣ Define library target
 add_library(collection STATIC
         src/Array.c
         src/Dictionary.c)
 add_library(collection::collection ALIAS collection)
 
-# 3️⃣ Target properties
+# 3️⃣ Target include paths
 target_include_directories(collection
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -22,25 +22,43 @@ include(GNUInstallDirs)
 
 install(TARGETS collection
         EXPORT collection-targets
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT CollectionRunTime
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT CollectionRunTime NAMELINK_COMPONENT CollectionDevelopment
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT CollectionDevelopment)
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# 5️⃣ Export targets
+# 5️⃣ Export targets for find_package()
 install(EXPORT collection-targets
         FILE collection-targets.cmake
         NAMESPACE collection::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/collection)
 
-# 6️⃣ Tests & Examples
+# 6️⃣ Package configuration files
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(cmake/collectionConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/collectionConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/collection)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/collectionConfig.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/collection)
+
+# 7️⃣ Package version file
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/collectionConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/collectionConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/collection)
+
+# 8️⃣ Tests
 option(BUILD_TESTS "Build Tests" OFF)
 if (BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif ()
 
+# 9️⃣ Examples
 option(BUILD_EXAMPLES "Build Examples" OFF)
 if (BUILD_EXAMPLES)
     add_subdirectory(examples)

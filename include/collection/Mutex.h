@@ -1,5 +1,6 @@
 /**
  * @file mutex.h
+ * @ingroup Collection
  * @brief Cross-platform mutex abstraction for thread synchronization.
  *
  * Provides a unified interface for mutex operations on Windows and POSIX systems.
@@ -22,6 +23,9 @@
  * mutex_unlock(&m);
  * mutex_destroy(&m);
  * ```
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
  */
 
 #pragma once

@@ -3,7 +3,7 @@
 * @internal
 * @brief Dictionary Implementation
 *
-* @author Saad Shams
+* @author Saad Shams https://linkedin.com/in/muizz
 * @copyright BSD 3-Clause License
 */
 #include <stdlib.h>
@@ -48,18 +48,18 @@ static bool put(struct IDictionary *self, const char *key, const void *value, co
 
     const unsigned long index = hash(key) % this->capacity;
 
-    struct DictionaryNode *DictionaryNode = malloc(sizeof(struct DictionaryNode));
-    if (DictionaryNode == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode.", NULL;
+    struct DictionaryNode *node = malloc(sizeof(struct DictionaryNode));
+    if (node == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode.", NULL;
 
-    DictionaryNode->key = strdup(key); // 🆕 Duplicate key string for ownership
-    if (DictionaryNode->key == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode key.", NULL;
-    DictionaryNode->value = value;
-    DictionaryNode->next = NULL;
+    node->key = strdup(key); // 🆕 Duplicate key string for ownership
+    if (node->key == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode key.", NULL;
+    node->value = value;
+    node->next = NULL;
 
     // 🔗 Append new DictionaryNode to bucket's linked list
     struct DictionaryNode **cursor;
     for(cursor = &this->buckets[index]; *cursor; cursor = &(*cursor)->next) {}
-    *cursor = DictionaryNode;
+    *cursor = node;
 
     mutex_unlock(&this->mutex);
     return true;
@@ -93,13 +93,13 @@ void *removeItem(struct IDictionary *self, const char *key) {
     void *value = NULL;
 
     for (struct DictionaryNode **cursor = &this->buckets[index]; *cursor; cursor = &(*cursor)->next) {
-        struct DictionaryNode *DictionaryNode = *cursor;
-        if (strcmp(DictionaryNode->key, key) == 0) {
-            *cursor = DictionaryNode->next;       // 🔗 Remove DictionaryNode from list
-            value = (void *)DictionaryNode->value;
+        struct DictionaryNode *node = *cursor;
+        if (strcmp(node->key, key) == 0) {
+            *cursor = node->next;       // 🔗 Remove DictionaryNode from list
+            value = (void *)node->value;
 
-            free((void *) DictionaryNode->key);   // 🧹 Free duplicated key
-            free(DictionaryNode);                 // 🧹 Free DictionaryNode
+            free((void *) node->key);   // 🧹 Free duplicated key
+            free(node);                 // 🧹 Free DictionaryNode
             break;
         }
     }
@@ -138,11 +138,11 @@ static void clear(const struct IDictionary *self, void (*callback)(void *value))
     for (size_t i = 0; i < this->capacity; ++i) {
         struct DictionaryNode *current = this->buckets[i];
         while (current != NULL) {
-            struct DictionaryNode *DictionaryNode = current;
+            struct DictionaryNode *node = current;
             current = current->next;
-            free((void *) DictionaryNode->key); // 🧹 Free key
-            if (callback) callback((void *) DictionaryNode->value); // 🔔 User cleanup
-            free(DictionaryNode); // 🧹 Free DictionaryNode
+            free((void *) node->key); // 🧹 Free key
+            if (callback) callback((void *) node->value); // 🔔 User cleanup
+            free(node); // 🧹 Free DictionaryNode
         }
         this->buckets[i] = NULL; // 🔄 Reset bucket pointer
     }

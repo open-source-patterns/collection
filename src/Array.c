@@ -3,7 +3,7 @@
 * @internal
 * @brief Array Implementation
 *
-* @author Saad Shams
+* @author Saad Shams https://linkedin.com/in/muizz
 * @copyright BSD 3-Clause License
 */
 #include <stdlib.h>
@@ -63,14 +63,14 @@ static const void *find(const struct IArray *self, bool (*predicate)(const void 
 static const void *unshift(struct IArray *self, const void *item, const char **error) {
     struct Array *this = (struct Array *) self;
 
-    struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
-    if (ArrayNode == NULL) return *error = "[Collection::Array::unshift] Error: Failed to allocate ArrayNode.", NULL;
+    struct ArrayNode *node = malloc(sizeof(struct ArrayNode));
+    if (node == NULL) return *error = "[Collection::Array::unshift] Error: Failed to allocate ArrayNode.", NULL;
 
     mutex_lock(&this->mutex);
 
-    ArrayNode->item = item;              // 🆕 Store item
-    ArrayNode->next = this->list;    // 🔗 Link old head
-    this->list = ArrayNode;          // 🔄 Update head pointer
+    node->item = item;              // 🆕 Store item
+    node->next = this->list;    // 🔗 Link old head
+    this->list = node;          // 🔄 Update head pointer
 
     mutex_unlock(&this->mutex);
     return item;
@@ -80,20 +80,20 @@ static const void *unshift(struct IArray *self, const void *item, const char **e
 static const void *push(struct IArray *self, const void *item, const char **error) {
     struct Array *this = (struct Array *) self;
 
-    struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
-    if (ArrayNode == NULL) return *error = "[Collection::Array::push] Error: Failed to allocate ArrayNode.", NULL;
+    struct ArrayNode *node = malloc(sizeof(struct ArrayNode));
+    if (node == NULL) return *error = "[Collection::Array::push] Error: Failed to allocate ArrayNode.", NULL;
 
-    ArrayNode->item = item;
-    ArrayNode->next = NULL;
+    node->item = item;
+    node->next = NULL;
 
     mutex_lock(&this->mutex);
 
     struct ArrayNode **cursor;
     for (cursor = &this->list; *cursor; cursor = &(*cursor)->next) {}
-    *cursor = ArrayNode; // ➕ Append new ArrayNode
+    *cursor = node; // ➕ Append new ArrayNode
 
     mutex_unlock(&this->mutex);
-    return ArrayNode->item;
+    return node->item;
 }
 
 // 🔎 Check if ArrayNode contains item
@@ -118,12 +118,12 @@ static const void *shift(struct IArray *self) {
     struct Array *this = (struct Array *) self;
     mutex_lock(&this->mutex);
 
-    struct ArrayNode *ArrayNode = this->list;
+    struct ArrayNode *node = this->list;
     const void *item = NULL;
-    if (ArrayNode) {
-        this->list = ArrayNode->next;    // 🔗 Update head
-        item = ArrayNode->item;              // 🎯 Capture item
-        free(ArrayNode);                     // 🧹 Free removed ArrayNode
+    if (node) {
+        this->list = node->next;    // 🔗 Update head
+        item = node->item;              // 🎯 Capture item
+        free(node);                     // 🧹 Free removed ArrayNode
     }
 
     mutex_unlock(&this->mutex);
@@ -140,10 +140,10 @@ static const void *pop(struct IArray *self) {
 
     const void *item = NULL;
     if (*cursor) {
-        struct ArrayNode *ArrayNode = *cursor;
-        item = ArrayNode->item;  // 🎯 Capture item
+        struct ArrayNode *node = *cursor;
+        item = node->item;  // 🎯 Capture item
         *cursor = NULL;     // 🔗 Remove last ArrayNode
-        free(ArrayNode);         // 🧹 Free ArrayNode
+        free(node);         // 🧹 Free ArrayNode
     }
 
     mutex_unlock(&this->mutex);
@@ -158,11 +158,11 @@ static void *removeItem(struct IArray *self, const void *item) {
     void *data = NULL;
     for (struct ArrayNode **cursor = &this->list; *cursor; cursor = &(*cursor)->next) {
         if ((*cursor)->item == item) {
-            struct ArrayNode *ArrayNode = *cursor;
+            struct ArrayNode *node = *cursor;
             *cursor = (*cursor)->next; // 🔗 Remove ArrayNode from ArrayNode
 
-            data = (void *)ArrayNode->item;  // 🎯 Return item
-            free(ArrayNode);                 // 🧹 Free ArrayNode
+            data = (void *)node->item;  // 🎯 Return item
+            free(node);                 // 🧹 Free ArrayNode
             break;
         }
     }
@@ -178,8 +178,8 @@ static struct IArray *clone(const struct IArray *self, const char **error) {
 
     struct ArrayNode *copy = NULL;
     for (struct ArrayNode *cursor = this->list, **copyPtr = &copy; cursor; cursor = cursor->next) {
-        struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
-        if (ArrayNode == NULL) {
+        struct ArrayNode *node = malloc(sizeof(struct ArrayNode));
+        if (node == NULL) {
             mutex_unlock(&this->mutex);
             while (copy) {
                 struct ArrayNode *temp = copy;
@@ -189,10 +189,10 @@ static struct IArray *clone(const struct IArray *self, const char **error) {
             return *error = "[Collection::Array::clone] Error: Failed to allocate ArrayNode.", NULL;
         }
 
-        ArrayNode->item = cursor->item;  // 🆕 Shallow copy item pointer
-        ArrayNode->next = NULL;
-        *copyPtr = ArrayNode;            // 🔗 Append ArrayNode to new ArrayNode
-        copyPtr = &ArrayNode->next;
+        node->item = cursor->item;  // 🆕 Shallow copy item pointer
+        node->next = NULL;
+        *copyPtr = node;            // 🔗 Append ArrayNode to new ArrayNode
+        copyPtr = &node->next;
     }
 
     mutex_unlock(&this->mutex);
@@ -229,10 +229,10 @@ static void clear(struct IArray *self, void (*callback)(void *item)) {
     mutex_lock(&this->mutex);
 
     for (struct ArrayNode **cursor = &((struct Array *) self)->list; *cursor;) {
-        struct ArrayNode *ArrayNode = *cursor;
+        struct ArrayNode *node = *cursor;
         *cursor = (*cursor)->next;         // 🔗 Remove ArrayNode from ArrayNode
-        if (callback) callback((void *) ArrayNode->item);  // 🔔 User cleanup callback
-        free(ArrayNode);                        // 🧹 Free ArrayNode memory
+        if (callback) callback((void *) node->item);  // 🔔 User cleanup callback
+        free(node);                        // 🧹 Free ArrayNode memory
     }
 
     mutex_unlock(&this->mutex);

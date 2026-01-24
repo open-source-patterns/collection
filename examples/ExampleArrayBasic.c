@@ -1,3 +1,10 @@
+/**
+* @file ExampleArrayBasic.c
+ * @brief Basic Array Example
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
+ */
 #include <assert.h>
 #include <stdio.h>
 

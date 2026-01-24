@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['removeitem_0',['removeItem',['../struct_i_array.html#ade5a444f2ad61fcc9f6cd002e37db766',1,'IArray::removeItem'],['../struct_i_dictionary.html#aae5d0e6f88d7e00eede0009ed0c44a21',1,'IDictionary::removeItem'],['../_array_8c.html#abe627423f2ad398782c60d5e198723e7',1,'removeItem(struct IArray *self, const void *item):&#160;Array.c'],['../_dictionary_8c.html#a3e9bfa3bc069e2890473b184c55de254',1,'removeItem(struct IDictionary *self, const char *key):&#160;Dictionary.c']]],
-  ['replace_1',['replace',['../struct_i_dictionary.html#ac21735cceab404c829738b543cd1cb1a',1,'IDictionary::replace'],['../_dictionary_8c.html#af4fde64435e172a2de7dcfedff7bc300',1,'replace():&#160;Dictionary.c']]]
+  ['pop_0',['pop',['../struct_i_array.html#a307dc20fdf52dcb6a42bb2fb2db999d2',1,'IArray::pop'],['../_array_8c.html#a3098072e00e6a094a753a02628e910b9',1,'pop(struct IArray *self):&#160;Array.c']]],
+  ['public_20interface_1',['Public Interface',['../group___collection.html',1,'']]],
+  ['push_2',['push',['../struct_i_array.html#aa85f91b04dac201f59fe0c945481b57a',1,'IArray::push'],['../_array_8c.html#aeaf42f2f92ef2ad39d8e93778b1fd1a9',1,'push():&#160;Array.c']]],
+  ['put_3',['put',['../struct_i_dictionary.html#af1c9fc2fa1659d8d5c422326e101329c',1,'IDictionary::put'],['../_dictionary_8c.html#afe857389d6975c883889289b0cbdbd2f',1,'put():&#160;Dictionary.c']]]
 ];

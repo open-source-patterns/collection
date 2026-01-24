@@ -1,3 +1,10 @@
+/**
+ * @file ArrayTest.c
+ * @brief Array Unit Test
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
+ */
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>

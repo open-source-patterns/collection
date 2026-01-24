@@ -1,5 +1,6 @@
 /**
  * @file IDictionary.h
+ * @ingroup Collection
  * @brief Dictionary Interface
  *
  * This header declares the IDictionary struct, which provides
@@ -10,7 +11,7 @@
  * Implementations of this interface can vary in storage and
  * performance characteristics but share this common API.
  *
- * @author Saad Shams
+ * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
  */
 #pragma once

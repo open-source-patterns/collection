@@ -3,7 +3,7 @@
 * @internal
 * @brief Dictionary Header
 *
-* @author Saad Shams
+* @author Saad Shams https://linkedin.com/in/muizz
 * @copyright BSD 3-Clause License
 */
 #pragma once

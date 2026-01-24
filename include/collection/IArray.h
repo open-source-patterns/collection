@@ -1,5 +1,6 @@
 /**
  * @file IArray.h
+ * @ingroup Collection
  * @brief Array Interface
  *
  * Defines the IArray interface and the List node structure,
@@ -8,7 +9,7 @@
  *
  * Designed for concurrent access with thread-safety expected from implementations.
  *
- * @author Saad Shams
+ * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
  */
 #pragma once

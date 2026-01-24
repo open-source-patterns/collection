@@ -3,7 +3,7 @@
  * @internal
  * @brief Array Header
  *
- * @author Saad Shams
+ * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
  */
 #pragma once
@@ -13,7 +13,7 @@
 
 /**
  * @struct ArrayNode
- * @brief Represents a ArrayNode in a singly linked list.
+ * @brief Represents a node in a singly linked list.
  *
  * Each ArrayNode stores a generic pointer to an item and a pointer to the next ArrayNode in the list.
  */

@@ -14,7 +14,7 @@
 * Verify: `cl && link && cmake --version`
 
 **Mac**:
-  * Install XCode Command Line Tools: `xcode-select --install`  
+  * Install Xcode Command Line Tools: `xcode-select --install`  
   * Install Brew: `brew install cmake && echo 'export PATH="/opt/homebrew/bin:$PATH"' >> "$HOME/.zshrc"`
   * Verify: `clang --version && make --version && cmake --version`
 
@@ -28,7 +28,7 @@
 ### Debug + Test
 ```shell
 mkdir -p build-debug
-cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=~/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=/Users/username/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build-debug --parallel
 ctest --test-dir build-debug --output-on-failure
 ```
@@ -37,7 +37,7 @@ ctest --test-dir build-debug --output-on-failure
 ```shell
 mkdir -p build-debug
 cmake -B build-debug \
- -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=~/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake \
+ -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=/Users/username/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake \
  -DCMAKE_C_FLAGS="-Wall -Werror -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer" \
  -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" 
 cmake --build build-debug
@@ -47,7 +47,7 @@ ctest --test-dir build-debug --output-on-failure
 ### Release + Test
 ```shell
 mkdir -p build-release
-cmake -B build-release -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=~/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake -B build-release -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DCMAKE_TOOLCHAIN_FILE=/Users/username/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build-release --parallel
 ctest --test-dir build-release
 ```
@@ -73,7 +73,9 @@ doxygen && open docs/index.html # To re-generate docs
     echo 'export PATH="$VCPKG_ROOT:$PATH"' >> ~/.zshrc # Add VCPKG to your PATH
     source ~/.zshrc && vcpkg --version # reload and check the version
     ```
-* **Develop Your Library**  [Tutorial](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-powershell)
+* **Develop Your Library**
+  * Configure CLion: Settings → Build, Execution, Deployment → CMake -DCMAKE_TOOLCHAIN_FILE/Users/username/Documents/microsoft/vcpkg/scripts/buildsystems/vcpkg.cmake
+  * [Tutorial](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-powershell)
 
 * **Create a VCPKG Port**
     - Add your port under `ports/collection/` with [vcpkg.json](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-json), [usage](https://learn.microsoft.com/en-us/vcpkg/maintainers/handling-usage-files) and [portfile.cmake](https://learn.microsoft.com/en-us/vcpkg/concepts/ports)
@@ -88,14 +90,14 @@ doxygen && open docs/index.html # To re-generate docs
 * **Test Your Port**
     * **VCPKG**:
         * In the `vcpkg/ports` directory, Edit vcpkg.json and Replace `vcpkg_from_github` with a local path override:
-          `set(SOURCE_PATH "~/Documents/open-source-patterns/collection")`
-        * Cleanup: Delete `project/cmake_build-debug`, `project/vcpkg_installed`, `~/.cache/vcpkg/archives` -> File -> Reload CMake Project -> `vcpkg install --overlay-ports="$HOME/Documents/microsoft/vcpkg/ports"`
+          `set(SOURCE_PATH "/Users/username/Documents/open-source-patterns/collection")`
+        * Cleanup: Delete `project/cmake_build-debug`, `project/vcpkg_installed`, `~/.cache/vcpkg/archives`, File → Reload CMake Project
     * **Consumer**:
-        * Pass the option to CMake: `-DVCPKG_OVERLAY_PORTS=~/Documents/microsoft/vcpkg/ports`
-        * Install the port using an overlay: `vcpkg install --overlay-ports="$HOME/Documents/microsoft/vcpkg/ports"`
+        * Configure CMake: `-DVCPKG_OVERLAY_PORTS=/Users/username/Documents/microsoft/vcpkg/ports`
 
 * **Register Version**
   `vcpkg x-add-version collection`
+
 * **Submit PR to Official vcpkg**
 
 ---
@@ -108,7 +110,7 @@ doxygen && open docs/index.html # To re-generate docs
 
 * **Update VCPKG Port**1
     * Update `vcpkg.json` version on VCPKG repository.
-    * Update portfile.cmake: Update SHA512 and revert to vcpkg_from_github
+    * Update portfile.cmake: Update SHA512 and revert to `vcpkg_from_github` instead of a local path.
       ```shell
       shasum -a 512 /path/to/collection.tar.gz
       vcpkg hash /path/to/collection-1.0.1.tar.gz
@@ -119,6 +121,7 @@ doxygen && open docs/index.html # To re-generate docs
   `vcpkg x-add-version collection --overwrite-version`
   This updates version metadata and links the correct git tree.
 
+* **Submit PR to Official vcpkg**
 ---
 
 ## Coding Guidelines

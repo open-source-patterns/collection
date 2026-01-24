@@ -1,3 +1,10 @@
+/**
+* @file ExampleArrayClone.c
+ * @brief Array Clone Example
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
+ */
 #include <stdio.h>
 #include "collection/IArray.h"
 

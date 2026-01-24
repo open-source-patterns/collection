@@ -1,3 +1,10 @@
+/**
+* @file ExampleArrayRemove.c
+ * @brief Array Remove Item Example
+ *
+ * @author Saad Shams https://linkedin.com/in/muizz
+ * @copyright BSD 3-Clause License
+ */
 #include <stdio.h>
 #include "collection/IArray.h"
 
