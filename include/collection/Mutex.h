@@ -30,17 +30,12 @@
 #include <windows.h>
 #include <stdlib.h>
 
-/* ---------- mutex ---------- */
-
 typedef struct { CRITICAL_SECTION cs; } Mutex;
-
 #define mutex_init(m) InitializeCriticalSection(&(m)->cs)
 #define mutex_destroy(m) DeleteCriticalSection(&(m)->cs)
 #define mutex_lock(m) EnterCriticalSection(&(m)->cs)
 #define mutex_unlock(m) LeaveCriticalSection(&(m)->cs)
 #define mutex_lock_shared(m) mutex_lock(m) // Windows doesn't support rwlock natively, so read/write distinction is the same
-
-/* ---------- once support ---------- */
 
 typedef INIT_ONCE MutexOnce;
 #define MUTEX_ONCE_INIT INIT_ONCE_STATIC_INIT
@@ -65,7 +60,7 @@ static BOOL CALLBACK _mutex_win_once_wrapper(PINIT_ONCE InitOnce, PVOID Paramete
 #define mutex_once(once_ptr, fn) \
     InitOnceExecuteOnce((once_ptr), _mutex_win_once_wrapper, (PVOID)(fn), NULL)
 
-/* ---------- pthread compatibility ---------- */
+/* ---------- pthread ---------- */
 
 typedef HANDLE pthread_t;
 
@@ -103,17 +98,12 @@ static inline int pthread_join(pthread_t thread, void** retval) {
 
 #include <pthread.h>
 
-/* ---------- mutex ---------- */
-
 typedef pthread_rwlock_t Mutex;
-
 #define mutex_init(m) pthread_rwlock_init(m, NULL)
 #define mutex_destroy(m) pthread_rwlock_destroy(m)
 #define mutex_lock(m) pthread_rwlock_wrlock(m)
 #define mutex_unlock(m) pthread_rwlock_unlock(m)
 #define mutex_lock_shared(m) pthread_rwlock_rdlock(m)
-
-/* ---------- once ---------- */
 
 typedef pthread_once_t MutexOnce;
 #define MUTEX_ONCE_INIT PTHREAD_ONCE_INIT
