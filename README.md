@@ -22,10 +22,25 @@
 ## Getting Started
 
 ### 📖 Documentation 
-[API Docs](https://open-source-patterns.github.io/collection)
+[API Docs](https://open-source-patterns.github.io/collection)  
+[Examples](https://github.com/open-source-patterns/collection/tree/main/examples)  
+[Developer Guide](https://github.com/open-source-patterns/collection/blob/main/DEV_GUIDE.md)  
 
 ### 📦 Installation
-Add `"osp-collection"` to the `dependencies` array in your `vcpkg.json` file, then run: `vcpkg install`
+#### vcpkg.json
+```json
+{
+  "name": "example",
+  "version": "1.0.0",
+  "dependencies": [ "osp-collection" ]
+}
+```
+
+#### CMakeLists.txt
+```cmake
+find_package(collection CONFIG REQUIRED)
+target_link_libraries(example PRIVATE collection::collection)
+```
 
 ## 📚 Usage
 
@@ -38,9 +53,10 @@ const char *error = NULL;
 struct IArray *array = collection_array_new(&error);
 array->push(array, "Apple");
 array->push(array, "Banana");
+array->push(array, "Orange");
 
 while (array->size(array) > 0) {
-    printf("Fruit: %s\n", (const char *)array->shift(array));
+    printf("Fruit: %s\n", (const char *)array->shift(array)); // Apple Banana Orange
 }
 
 collection_array_free(&array);
@@ -56,7 +72,7 @@ struct IDictionary *dict = collection_dictionary_new(&error);
 dict->put(dict, "name", "Alice");
 dict->put(dict, "age", "30");
 
-printf("Name: %s\n", (const char *)dict->get(dict, "name"));
+printf("Name: %s\n", (const char *)dict->get(dict, "name")); // Name: Alice
 dict->removeItem(dict, "age");
 
 collection_dictionary_free(&dict);
