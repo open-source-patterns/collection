@@ -34,7 +34,8 @@ Add `"osp-collection"` to the `dependencies` array in your `vcpkg.json` file, th
 ```c++
 #include "collection/array.h"
 
-struct IArray *array = collection_array_new();
+const char *error = NULL;
+struct IArray *array = collection_array_new(&error);
 array->push(array, "Apple");
 array->push(array, "Banana");
 
@@ -50,7 +51,8 @@ collection_array_free(&array);
 ```c++
 #include "collection/dictionary.h"
 
-struct IDictionary *dict = collection_dictionary_new();
+const char *error = NULL;
+struct IDictionary *dict = collection_dictionary_new(&error);
 dict->put(dict, "name", "Alice");
 dict->put(dict, "age", "30");
 
