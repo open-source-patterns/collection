@@ -1,3 +1,11 @@
+/**
+* @file Array.c
+* @internal
+* @brief Array Implementation
+*
+* @author Saad Shams
+* @copyright BSD 3-Clause License
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,13 +32,12 @@ static const void *get(const struct IArray *self, const int n) {
 }
 
 // 🔄 Iteration calling callback on each element with its index
-static void forEach(const struct IArray *self, void (*callback)(const void *element, int index, const void *data), const void *data) {
+static void forEach(const struct IArray *self, void (*callback)(const void *element, const void *data, const char **error), const void *data, const char **error) {
     struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex);
 
-    int index = 0;
-    for (const struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next, index++) {
-        callback(cursor->item, index, data);
+    for (const struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next) {
+        callback(cursor->item, data, error);
     }
 
     mutex_unlock(&this->mutex);
@@ -53,13 +60,11 @@ static const void *find(const struct IArray *self, bool (*predicate)(const void 
 }
 
 // ➕ Insert item at head (unshift)
-static const void *unshift(struct IArray *self, const void *item) {
+static const void *unshift(struct IArray *self, const void *item, const char **error) {
     struct Array *this = (struct Array *) self;
+
     struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
-    if (ArrayNode == NULL) {
-        fprintf(stderr, "ArrayNode allocation failed.\n");
-        return NULL;
-    }
+    if (ArrayNode == NULL) return *error = "[Collection::Array::unshift] Error: Failed to allocate ArrayNode.", NULL;
 
     mutex_lock(&this->mutex);
 
@@ -72,13 +77,11 @@ static const void *unshift(struct IArray *self, const void *item) {
 }
 
 // ➕ Append item at tail (push)
-static const void *push(struct IArray *self, const void *item) {
+static const void *push(struct IArray *self, const void *item, const char **error) {
     struct Array *this = (struct Array *) self;
+
     struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
-    if (ArrayNode == NULL) {
-        fprintf(stderr, "ArrayNode allocation failed.\n");
-        return NULL;
-    }
+    if (ArrayNode == NULL) return *error = "[Collection::Array::push] Error: Failed to allocate ArrayNode.", NULL;
 
     ArrayNode->item = item;
     ArrayNode->next = NULL;
@@ -169,17 +172,21 @@ static void *removeItem(struct IArray *self, const void *item) {
 }
 
 // 🆚 Clone the ArrayNode (shallow copy)
-static struct IArray *clone(const struct IArray *self) {
+static struct IArray *clone(const struct IArray *self, const char **error) {
     struct Array *this = (struct Array *) self;
     mutex_lock_shared(&this->mutex); // 🔒 Acquire read lock
 
     struct ArrayNode *copy = NULL;
     for (struct ArrayNode *cursor = this->list, **copyPtr = &copy; cursor; cursor = cursor->next) {
         struct ArrayNode *ArrayNode = malloc(sizeof(struct ArrayNode));
-        if (!ArrayNode) {
+        if (ArrayNode == NULL) {
             mutex_unlock(&this->mutex);
-            fprintf(stderr, "ArrayNode allocation failed.\n");
-            return NULL;
+            while (copy) {
+                struct ArrayNode *temp = copy;
+                copy = copy->next;
+                free(temp);
+            }
+            return *error = "[Collection::Array::clone] Error: Failed to allocate ArrayNode.", NULL;
         }
 
         ArrayNode->item = cursor->item;  // 🆕 Shallow copy item pointer
@@ -189,7 +196,17 @@ static struct IArray *clone(const struct IArray *self) {
     }
 
     mutex_unlock(&this->mutex);
-    struct IArray *arr = collection_array_new();
+
+    struct IArray *arr = collection_array_new(error);
+    if (*error != NULL) { // cleanup
+        for (struct ArrayNode **cursor = &copy; *cursor;) {
+            struct ArrayNode *temp = *cursor;
+            *cursor = (*cursor)->next;
+            free(temp);
+        }
+        return NULL;
+    }
+
     ((struct Array *) arr)->list = copy; // 🔄 Set cloned ArrayNode head
     return arr;
 }
@@ -242,19 +259,17 @@ static struct Array *init(struct Array *array) {
 }
 
 // 🆕 Allocate new Array instance
-static struct Array *alloc() {
+static struct Array *alloc(const char **error) {
     struct Array *array = malloc(sizeof(struct Array));
-    if (array == NULL) {
-        fprintf(stderr, "Array allocation failed.\n");
-        return NULL;
-    }
+    if (array == NULL) return *error = "[Collection::Array::alloc] Error: Failed to allocate Array.", NULL;
+
     memset(array, 0, sizeof(struct Array));
     return array;
 }
 
 // 🆕 Create new IArray instance
-struct IArray *collection_array_new() {
-    return (struct IArray *) init(alloc());
+struct IArray *collection_array_new(const char **error) {
+    return (struct IArray *) init(alloc(error));
 }
 
 // 🧹 Free Array instance (note: ArrayNode should be cleared before free)

@@ -1,8 +1,11 @@
 /**
- * @file dictionary.h
- * @brief Factory and destructor functions for IDictionary implementations.
- */
-
+* @file Dictionary.h
+* @internal
+* @brief Dictionary Header
+*
+* @author Saad Shams
+* @copyright BSD 3-Clause License
+*/
 #pragma once
 
 #include "collection/Mutex.h"

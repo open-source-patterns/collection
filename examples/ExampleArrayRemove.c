@@ -2,10 +2,11 @@
 #include "collection/IArray.h"
 
 int main() {
-    struct IArray *array = collection_array_new();
-    array->push(array, "Apple");
-    array->push(array, "Banana");
-    array->push(array, "Cherry");
+    const char *error = NULL;
+    struct IArray *array = collection_array_new(&error);
+    array->push(array, "Apple", &error);
+    array->push(array, "Banana", &error);
+    array->push(array, "Cherry", &error);
 
     printf("Contains 'Banana'? %s\n", array->containsValue(array, "Banana") ? "Yes" : "No");
 

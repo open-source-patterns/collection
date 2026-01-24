@@ -7,12 +7,13 @@ void print_and_free(void *item) {
 }
 
 int main() {
-    struct IArray *original = collection_array_new();
-    original->push(original, "One");
-    original->push(original, "Two");
-    original->push(original, "Three");
+    const char *error = NULL;
+    struct IArray *original = collection_array_new(&error);
+    original->push(original, "One", &error);
+    original->push(original, "Two", &error);
+    original->push(original, "Three", &error);
 
-    struct IArray *clone = original->clone(original);
+    struct IArray *clone = original->clone(original, &error);
     printf("Clone size: %d\n", clone->size(clone));
 
     original->clear(original, print_and_free);

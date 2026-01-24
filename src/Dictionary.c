@@ -1,6 +1,13 @@
+/**
+* @file Dictionary.c
+* @internal
+* @brief Dictionary Implementation
+*
+* @author Saad Shams
+* @copyright BSD 3-Clause License
+*/
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include "Dictionary.h"
 
@@ -35,19 +42,17 @@ static const void *get(const struct IDictionary *self, const char *key) {
 }
 
 // ➕ Insert key-value pair with write-lock
-static bool put(struct IDictionary *self, const char *key, const void *value) {
+static bool put(struct IDictionary *self, const char *key, const void *value, const char **error) {
     struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
 
     struct DictionaryNode *DictionaryNode = malloc(sizeof(struct DictionaryNode));
-    if (DictionaryNode == NULL) {
-        fprintf(stderr, "DictionaryNode allocation failed.\n");
-        return false;
-    }
+    if (DictionaryNode == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode.", NULL;
 
     DictionaryNode->key = strdup(key); // 🆕 Duplicate key string for ownership
+    if (DictionaryNode->key == NULL) return *error = "[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode key.", NULL;
     DictionaryNode->value = value;
     DictionaryNode->next = NULL;
 
@@ -161,12 +166,9 @@ static struct Dictionary *init(struct Dictionary *dictionary) {
 }
 
 // 🆕 Allocate and initialize new dictionary
-static struct Dictionary *alloc() {
+static struct Dictionary *alloc(const char **error) {
     struct Dictionary *dictionary = malloc(sizeof(struct Dictionary));
-    if (dictionary == NULL) {
-        fprintf(stderr, "Dictionary allocation failed.\n");
-        return NULL;
-    }
+    if (dictionary == NULL) return *error = "[Collection::Dictionary::alloc] Error: Failed to allocate Dictionary.", NULL;
 
     memset(dictionary, 0, sizeof(struct Dictionary));
 
@@ -177,8 +179,8 @@ static struct Dictionary *alloc() {
 }
 
 // 🆕 Create new IDictionary instance
-struct IDictionary *collection_dictionary_new() {
-    return (struct IDictionary *) init(alloc());
+struct IDictionary *collection_dictionary_new(const char **error) {
+    return (struct IDictionary *) init(alloc(error));
 }
 
 // 🧹 Free dictionary instance (note: DictionaryNode entries already freed by clear)

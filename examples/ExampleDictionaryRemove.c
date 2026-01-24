@@ -7,11 +7,16 @@ void cleanup(void *value) {
 }
 
 int main() {
-    struct IDictionary *dict = collection_dictionary_new();
+    const char *error = NULL;
+    struct IDictionary *dict = collection_dictionary_new(&error);
+    if (error != NULL) return fprintf(stderr, "%s\n", error), 1;
 
-    dict->put(dict, "one", "1");
-    dict->put(dict, "two", "2");
-    dict->put(dict, "three", "3");
+    dict->put(dict, "one", "1", &error);
+    if (error != NULL) return fprintf(stderr, "%s\n", error), 1;
+    dict->put(dict, "two", "2", &error);
+    if (error != NULL) return fprintf(stderr, "%s\n", error), 1;
+    dict->put(dict, "three", "3", &error);
+    if (error != NULL) return fprintf(stderr, "%s\n", error), 1;
 
     const char *removed = dict->removeItem(dict, "two");
     printf("Removed: %s\n", removed ? removed : "(not found)");
