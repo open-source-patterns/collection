@@ -2,11 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-05-17
+### Added
+- Opaque caller-managed memory initialization pattern for collections
+- Optional destructor callbacks for collection deinitialization
+
 ## [1.0.1] - 2026-01-26
 ### Added
 - In-out error parameters for memory allocation functions
 - Unit tests for `Mutex`
-- `DEV_GUIDE.md`
+- `DEVELOPMENT.md`
 
 ### Removed
 - `index` parameter from `forEach`

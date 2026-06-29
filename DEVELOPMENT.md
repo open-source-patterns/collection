@@ -62,7 +62,7 @@ doxygen && open docs/index.html # To re-generate docs
 
 ## VCPKG Publishing Guide 🚀
 
-* **For and Clone VCPKG:**
+* **Fork and Clone VCPKG:**
     VCPKG Repository: https://github.com/microsoft/vcpkg
 * Bootstrap 
   * Linux/MacOS: `./bootstrap-vcpkg.sh`
@@ -148,14 +148,6 @@ void array_push(IArray *array, void *item);
 * Implement concrete structs in `src/` and provide factory functions.
 * Ensure **thread safety** if your structure is concurrent.
 * Update **CMakeLists.txt** to include new sources and optionally add unit tests.
-
----
-
-## Debugging & Logging
-
-* Use `assert` for internal consistency checks.
-* Optional: add error out-params (`const char **error`) for caller-friendly error handling.
-* Logging is minimal — library errors should propagate via error strings.
 
 ---
 

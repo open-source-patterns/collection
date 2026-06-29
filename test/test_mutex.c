@@ -1,24 +1,49 @@
 /**
- * @file MutexTest.c
+ * @file test_mutex.c
  * @brief Mutex Unit Test
  *
  * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
  */
+#include "test_mutex.h"
+#include "collection/i_platform.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
-#include "collection/Mutex.h"
-#include "MutexTest.h"
-
 #define THREAD_COUNT 16
 #define ITERATIONS   10000
 
+static void before_all(void) {}
+static void before_each(void) {}
+static void after_each(void) {}
+static void after_all(void) {}
+
+static void test(const char *name, void (*callback)(void)) {
+    printf("\033[0;34m[RUNNING]\033[0m %s...\n", name);
+    fflush(stdout);
+
+    before_each();
+    callback();
+    after_each();
+
+    printf("\033[0;32m[PASSED]\033[0m %s\n", name);
+    fflush(stdout);
+}
+
 int main(void) {
-    test_mutex_basic();
-    test_mutex_once();
-    test_mutex_once_with_mutex();
+    printf("\n\033[1;36m================================================\033[0m\n");
+    printf("\033[1;36m[SUITE] %s\033[0m\n", "MutexTest");
+    printf("\033[1;36m================================================\033[0m\n\n");
+
+    before_all();
+    test("test_mutex_basic", test_mutex_basic);
+    test("test_mutex_once", test_mutex_once);
+    test("test_mutex_once_with_mutex", test_mutex_once_with_mutex);
+    after_all();
+
+    printf("\n\033[1;32m[DONE] All tests in suite finished.\033[0m\n");
     return 0;
 }
 

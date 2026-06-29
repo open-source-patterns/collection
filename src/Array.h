@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "collection/Mutex.h"
-#include "collection/IArray.h"
+#include "collection/i_array.h"
+#include "collection/i_platform.h"
 
 /**
  * @struct ArrayNode
@@ -34,7 +34,7 @@ struct ArrayNode {
  * This implementation provides thread-safe list operations.
  */
 struct Array {
-    struct IArray base;             /**< 🧩 Base interface for array operations */
+    struct IArray super;            /**< 🧩 Base interface for array operations */
     struct ArrayNode *list;         /**< 🗃️ Head of the singly linked ArrayNode */
     Mutex mutex;                    /**< 🔒 Mutex for thread safety */
 };

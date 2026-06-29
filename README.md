@@ -24,7 +24,7 @@
 ### 📖 Documentation 
 [API Docs](https://open-source-patterns.github.io/collection)  
 [Examples](https://github.com/open-source-patterns/collection/tree/main/examples)  
-[Developer Guide](https://github.com/open-source-patterns/collection/blob/main/DEV_GUIDE.md)  
+[Developer Guide](https://github.com/open-source-patterns/collection/blob/main/DEVELOPMENT.md)  
 
 ### 📦 Installation
 #### vcpkg.json
@@ -47,35 +47,35 @@ target_link_libraries(example PRIVATE collection::collection)
 ### IArray
 
 ```c++
-#include "collection/array.h"
+#include "collection/collection.h"
 
-const char *error = NULL;
-struct IArray *array = collection_array_new(&error);
-array->push(array, "Apple", &error);
-array->push(array, "Banana", &error);
-array->push(array, "Orange", &error);
+struct IArray *array = collection_array_new();
+
+array->push(array, "Apple");
+array->push(array, "Banana");
+array->push(array, "Orange");
 
 while (array->size(array) > 0) {
-  printf("Fruit: %s\n", (const char *)array->shift(array)); // Apple Banana Orange
+  printf("Fruit: %s\n", (const char *) array->shift(array)); // Apple Banana Orange
 }
 
-collection_array_free(&array);
+collection_array_dealloc(&array, NULL); // pass free if items are heap allocated
 ```
 
 ### IDictionary
 
 ```c++
-#include "collection/dictionary.h"
+#include "collection/collection.h"
 
-const char *error = NULL;
-struct IDictionary *dict = collection_dictionary_new(&error);
-dict->put(dict, "name", "Alice", &error);
-dict->put(dict, "age", "30", &error);
+struct IDictionary *dictionary = collection_dictionary_new();;
 
-printf("Name: %s\n", (const char *)dict->get(dict, "name")); // Name: Alice
-dict->removeItem(dict, "age");
+dictionary->put(dictionary, "name", "Alice");
+dictionary->put(dictionary, "age", "30");
 
-collection_dictionary_free(&dict);
+printf("Name: %s\n", (const char *) dictionary->get(dictionary, "name")); // Name: Alice
+dictionary->removeItem(dictionary, "age");
+
+collection_dictionary_dealloc(&dictionary, NULL); // pass free if items are heap allocated
 ```
 
 ## License

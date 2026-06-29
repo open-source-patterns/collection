@@ -4,6 +4,6 @@
  */
 #pragma once
 
-#include "iArray.h"
-#include "IDictionary.h"
-#include "Mutex.h"
+#include "i_array.h"
+#include "i_dictionary.h"
+#include "i_platform.h"

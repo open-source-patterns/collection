@@ -1,5 +1,5 @@
 /**
-* @file Dictionary.h
+* @file dictionary.h
 * @internal
 * @brief Dictionary Header
 *
@@ -8,8 +8,8 @@
 */
 #pragma once
 
-#include "collection/Mutex.h"
-#include "collection/IDictionary.h"
+#include "collection/i_dictionary.h"
+#include "collection/i_platform.h"
 
 /**
  * @struct DictionaryNode
@@ -33,7 +33,7 @@ struct DictionaryNode {
  * as well as capacity and size metadata.
  */
 struct Dictionary {
-    struct IDictionary base;            /**< 🧩 Base interface for dictionary operations */
+    struct IDictionary super;           /**< 🧩 Base interface for dictionary operations */
     struct DictionaryNode **buckets;    /**< 🗃️ Array of bucket heads (linked lists) */
     size_t capacity;                    /**< 📏 Number of buckets in the hash table */
     size_t size;                        /**< 📊 Number of key-value pairs stored */

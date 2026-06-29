@@ -1,5 +1,5 @@
 /**
- * @file IDictionary.h
+ * @file i_dictionary.h
  * @ingroup Collection
  * @brief Dictionary Interface
  *
@@ -17,6 +17,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 
 /**
  * @brief Interface for a generic key-value dictionary.
@@ -29,9 +30,9 @@ struct IDictionary {
      *
      * @param self Pointer to the dictionary instance.
      * @param key Null-terminated string key to look up.
-     * @return Pointer to the value if key exists; otherwise NULL.
+     * @return true if the item gets replaced from the list, false otherwise.
      */
-    const void *(*get)(const struct IDictionary *self, const char *key);
+    void *(*get)(const struct IDictionary *self, const char *key);
 
     /**
      * @brief Adds or updates a key-value pair in the dictionary.
@@ -39,10 +40,9 @@ struct IDictionary {
      * @param self Pointer to the dictionary instance.
      * @param key Null-terminated string key to add or update.
      * @param value Pointer to the value to associate with the key.
-     * @param error Out-param for a static error string on failure (NULL on success).
      * @return true if insertion or update was successful; false on failure (e.g. memory allocation failure).
      */
-    bool (*put)(struct IDictionary *self, const char *key, const void *value, const char **error);
+    bool (*put)(struct IDictionary *self, const char *key, const void *value);
 
     /**
      * @brief Checks whether the dictionary contains a given key.
@@ -51,7 +51,7 @@ struct IDictionary {
      * @param key Null-terminated string key to check.
      * @return true if the key exists; false otherwise.
      */
-    bool (*containsKey)(const struct IDictionary *self, const char *key);
+    bool (*contains_key)(const struct IDictionary *self, const char *key);
 
     /**
      * @brief Removes the key-value pair associated with the given key.
@@ -61,7 +61,7 @@ struct IDictionary {
      * @return Pointer to the removed value if the key was found; otherwise NULL.
      *         Caller is responsible for managing the memory of the returned value.
      */
-    void *(*removeItem)(struct IDictionary *self, const char *key);
+    void *(*remove_item)(struct IDictionary *self, const char *key);
 
     /**
      * @brief Replaces the value associated with a key, returning the previous value.
@@ -78,27 +78,19 @@ struct IDictionary {
      * @brief Clears all key-value pairs from the dictionary.
      *
      * @param self Pointer to the dictionary instance.
-     * @param callback Optional function pointer called for each value before removal.
+     * @param destructor Optional function pointer called for each value before removal.
      *                 May be NULL if no cleanup is needed.
+     * @return true if the list gets cleared, false otherwise.
      */
-    void (*clear)(const struct IDictionary *self, void (*callback)(void *value));
+    bool (*clear)(const struct IDictionary *self, void (*destructor)(void *value));
 };
 
-/**
- * @brief Creates a new instance of an IDictionary implementation.
- *
- * Allocates and initializes a new dictionary object.
- * @param error Out-param for a static error string on failure (NULL on success).
- * @return Pointer to the newly created IDictionary instance. Returns NULL if allocation fails.
- */
-struct IDictionary *collection_dictionary_new(const char **error);
+struct IDictionary *collection_dictionary_new(void);
 
 /**
- * @brief Frees an IDictionary instance and releases its resources.
+ * @brief Deinitializes an Dictionary instance and releases internal resources.
  *
- * After calling this function, the dictionary pointer is set to NULL.
- *
- * @param dictionary Double pointer to the IDictionary instance to free.
- *                   Must not be NULL.
+ * @param dictionary Dictionary instance to deinitialize.
+ * @param destructor Optional callback used to destroy stored item values.
  */
-void collection_dictionary_free(struct IDictionary **dictionary);
+void collection_dictionary_dealloc(struct IDictionary **dictionary, void (*destructor)(void *item));

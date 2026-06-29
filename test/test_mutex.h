@@ -1,5 +1,5 @@
 /**
- * @file MutexTest.h
+ * @file test_mutex.h
  * @brief Mutex Unit Test
  *
  * @author Saad Shams https://linkedin.com/in/muizz
@@ -7,6 +7,6 @@
  */
 #pragma once
 
-void test_mutex_basic();
-void test_mutex_once();
-void test_mutex_once_with_mutex();
+void test_mutex_basic(void);
+void test_mutex_once(void);
+void test_mutex_once_with_mutex(void);
