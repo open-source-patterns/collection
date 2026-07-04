@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.0] - 2026-07-03
+## [1.1.0] - 2026-07-03
 
 ### Added
+- Opaque caller-managed memory initialization pattern for collections
+- Optional destructor callbacks for collection deinitialization
 - Cross-platform `Mutex` and `MutexOnce` abstractions.
 - Process resource usage utilities.
 - Unit tests for `Array`, `Dictionary`, and `Mutex`.
@@ -17,11 +19,6 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Cross-platform portability issues in tests and examples.
 - Minor implementation and build improvements.
-
-## [1.1.0] - 2026-05-17
-### Added
-- Opaque caller-managed memory initialization pattern for collections
-- Optional destructor callbacks for collection deinitialization
 
 ## [1.0.1] - 2026-01-26
 ### Added
