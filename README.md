@@ -11,8 +11,8 @@
 
 - 🧵 **Thread-safe** design for concurrent usage.
 - 📦 **Generic interface** using `void *` for data storage.
-- 🔁 **Singly linked list** implementation (`IArray`) with methods like `push`, `pop`, `unshift`, `shift`, `removeItem`, and `clone`.
-- 🔑 **Hash-based dictionary** (`IDictionary`) with `get`, `put`, `replace`, `removeItem`, `containsKey`, and `clear`.
+- 🔁 **Singly linked list** implementation (`IArray`) with methods like `push`, `pop`, `unshift`, `shift`, `remove_item`, and `clone`.
+- 🔑 **Hash-based dictionary** (`IDictionary`) with `get`, `put`, `replace`, `remove_item`, `contains_key`, and `clear`.
 - 🧪 Optional item-level cleanup via callbacks.
 - 💡 Clear separation of interfaces and concrete implementations.
 - 🧩 Object-oriented architecture in C using interface structs and function pointers to simulate encapsulation and polymorphism.
