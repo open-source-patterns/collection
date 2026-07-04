@@ -12,6 +12,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+#define strdup _strdup
+#endif
+
 #define INITIAL_CAPACITY 16
 
 // Computes the hash value for a string key.
