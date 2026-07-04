@@ -61,11 +61,10 @@ jobs:
         cmake -B ${{ steps.strings.outputs.build-output-dir }} \
           -S ${{ github.workspace }} \
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DCOLLECTION_BUILD_TESTS=ON \
           -DCOLLECTION_BUILD_EXAMPLES=ON \
-          -DCOLLECTION_ENABLE_SANITIZERS=${{ runner.os == 'Linux' && 'ON' || 'OFF' }}
+          -DCOLLECTION_ENABLE_SANITIZERS=${{ matrix.os == 'ubuntu-latest' && 'ON' || 'OFF' }}
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).

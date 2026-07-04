@@ -81,10 +81,10 @@ option(COLLECTION_BUILD_TESTS "Build Collection Tests" ${PROJECT_IS_TOP_LEVEL})
 if(COLLECTION_BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
-endif ()
+endif()
 
 # Examples
 option(COLLECTION_BUILD_EXAMPLES "Build Collection Examples" OFF)
 if(COLLECTION_BUILD_EXAMPLES)
     add_subdirectory(examples)
-endif ()
+endif()
