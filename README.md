@@ -56,7 +56,7 @@ array->push(array, "Banana");
 array->push(array, "Orange");
 
 while (array->count(array) > 0) {
-    printf("Fruit: %s ", (const char *) array->shift(array)); // Prints: Apple Banana Orange
+    printf("%s ", (const char *) array->shift(array)); // Prints: Apple Banana Orange
 }
 
 collection_array_dealloc(&array, NULL); // pass free if items are heap allocated

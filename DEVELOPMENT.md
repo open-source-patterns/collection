@@ -117,6 +117,8 @@ doxygen && open docs/index.html # To re-generate docs
       vcpkg hash /path/to/collection-1.0.1.tar.gz
       curl -L https://github.com/open-source-patterns/collection/archive/refs/tags/1.0.1.tar.gz | sha512sum
       ```
+      **SHA512 Hash:** Copy the output checksum into the `SHA512` field in `portfile.cmake`.
+  
     * **Update version**  
       `vcpkg x-add-version osp-collection --overwrite-version`
       This updates version metadata and links the correct git tree.
