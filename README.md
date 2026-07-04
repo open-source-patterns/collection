@@ -55,8 +55,8 @@ array->push(array, "Apple");
 array->push(array, "Banana");
 array->push(array, "Orange");
 
-while (array->size(array) > 0) {
-  printf("Fruit: %s\n", (const char *) array->shift(array)); // Apple Banana Orange
+while (array->count(array) > 0) {
+    printf("Fruit: %s ", (const char *) array->shift(array)); // Prints: Apple Banana Orange
 }
 
 collection_array_dealloc(&array, NULL); // pass free if items are heap allocated
@@ -73,8 +73,8 @@ dictionary->put(dictionary, "name", "Alice");
 dictionary->put(dictionary, "age", "30");
 
 printf("Name: %s\n", (const char *) dictionary->get(dictionary, "name")); // Name: Alice
-dictionary->removeItem(dictionary, "age");
-
+printf("Age: %s\n", (const char *) dictionary->get(dictionary, "age")); // Age: 30
+    
 collection_dictionary_dealloc(&dictionary, NULL); // pass free if items are heap allocated
 ```
 

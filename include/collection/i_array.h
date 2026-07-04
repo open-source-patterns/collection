@@ -3,11 +3,12 @@
  * @ingroup Collection
  * @brief Array Interface
  *
- * Defines the IArray interface and the List node structure,
- * providing function pointers for list manipulation operations
- * such as push, pop, shift, unshift, contains, clone, and clear.
+ * Defines the IArray interface for generic container implementations,
+ * providing function pointers for common operations such as insertion,
+ * removal, lookup, iteration, cloning, and clearing.
  *
- * Designed for concurrent access with thread-safety expected from implementations.
+ * Implementations of this interface are expected to provide thread-safe
+ * operations.
  *
  * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
@@ -18,112 +19,171 @@
 #include <stddef.h>
 
 /**
- * @brief Interface for a thread-safe, generic, singly linked list.
+ * @brief Interface for a generic, thread-safe array.
  */
 struct IArray {
     /**
-     * @brief Returns item at index.
-     * @return Item pointer, or NULL if index is out of range.
+     * @brief Returns the element at the specified index.
+     *
+     * @param self Pointer to the array instance.
+     * @param index Zero-based index.
+     *
+     * @return Pointer to the element, or NULL if the index is out of range.
      */
     const void *(*get)(const struct IArray *self, size_t index);
 
+    /**
+     * @brief Replaces the element at the specified index.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the replacement element.
+     * @param index Zero-based index.
+     *
+     * @return Pointer to the previous element, or NULL if the index is out of range.
+     */
     void *(*put)(struct IArray *self, const void *item, size_t index);
 
     /**
-     * @brief Iterates over each item in the list.
-     * @param self Pointer to the IArray instance.
-     * @param consumer Function called for each item. Receives the element, data and out-param error.
-     * @param data Optional data passed to consumer Function (e.g., notification).
+     * @brief Invokes a callback for each element in the array.
+     *
+     * @param self Pointer to the array instance.
+     * @param consumer Callback invoked for each element.
+     * @param data Optional user data passed to the callback.
      */
     void (*for_each)(const struct IArray *self, void (*consumer)(const void *element, const void *data), const void *data);
 
     /**
-     * @brief Finds the first element in the array that matches the given predicate.
-     * @param self Pointer to the IArray instance.
-     * @param predicate Function that returns true for the desired element.
-     * @param data Optional user data passed to the predicate function.
+     * @brief Finds the first element matching a predicate.
+     *
+     * @param self Pointer to the array instance.
+     * @param predicate Predicate invoked for each element.
+     * @param data Optional user data passed to the predicate.
+     *
      * @return Pointer to the first matching element, or NULL if no match is found.
      */
     const void *(*find)(const struct IArray *self, bool (*predicate)(const void *element, const void *data), const void *data);
 
+    /**
+     * @brief Returns the index of the first matching element.
+     *
+     * @param self Pointer to the array instance.
+     * @param predicate Predicate invoked for each element.
+     * @param data Optional user data passed to the predicate.
+     *
+     * @return Zero-based index of the first matching element, or SIZE_MAX if no match is found.
+     */
     size_t (*first_index)(const struct IArray *self, bool (*predicate)(const void *element, const void *data), const void *data);
 
+    /**
+     * @brief Returns the index of the last matching element.
+     *
+     * @param self Pointer to the array instance.
+     * @param predicate Predicate invoked for each element.
+     * @param data Optional user data passed to the predicate.
+     *
+     * @return Zero-based index of the last matching element, or SIZE_MAX if no match is found.
+     */
     size_t (*last_index)(const struct IArray *self, bool (*predicate)(const void *element, const void *data), const void *data);
 
     /**
-     * @brief Inserts an item at the beginning of the list.
-     * @param self Pointer to the IArray instance.
-     * @param item Pointer to the item to insert.
-     * @return The inserted item pointer on success, or NULL on failure.
+     * @brief Inserts an element at the beginning of the array.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the element to insert.
+     *
+     * @return Pointer to the inserted element, or NULL on failure.
      */
     const void *(*unshift)(struct IArray *self, const void *item);
 
     /**
-     * @brief Appends an item at the end of the list.
-     * @param self Pointer to the IArray instance.
-     * @param item Pointer to the item to append.
-     * @return true if the item gets inserted in the list, false otherwise.
+     * @brief Appends an element to the end of the array.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the element to append.
+     *
+     * @return true if the element was inserted successfully; otherwise false.
      */
     bool (*push)(struct IArray *self, const void *item);
 
     /**
-     * @brief Checks if the list contains a specific item.
-     * @param self Pointer to the IArray instance.
-     * @param item Pointer to the item to search for.
-     * @return true if the item exists in the list, false otherwise.
+     * @brief Determines whether the array contains the specified element.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the element to search for.
+     *
+     * @return true if the element exists; otherwise false.
      */
     bool (*contains_value)(const struct IArray *self, const void *item);
 
     /**
-     * @brief Removes and returns the first item in the list.
-     * @param self Pointer to the IArray instance.
-     * @return The removed item pointer, or NULL if list is empty.
+     * @brief Removes and returns the first element.
+     *
+     * @param self Pointer to the array instance.
+     *
+     * @return Pointer to the removed element, or NULL if the array is empty.
      */
     const void *(*shift)(struct IArray *self);
 
     /**
-     * @brief Removes and returns the last item in the list.
-     * @param self Pointer to the IArray instance.
-     * @return The removed item pointer, or NULL if list is empty.
+     * @brief Removes and returns the last element.
+     *
+     * @param self Pointer to the array instance.
+     *
+     * @return Pointer to the removed element, or NULL if the array is empty.
      */
     const void *(*pop)(struct IArray *self);
 
     /**
-     * @brief Removes and returns a specific item from the list.
-     * @param self Pointer to the IArray instance.
-     * @param item Pointer to the item to remove.
-     * @return The removed item pointer, or NULL if not found.
+     * @brief Removes the specified element from the array.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the element to remove.
+     *
+     * @return Pointer to the removed element, or NULL if the element was not found.
      */
     void *(*remove_item)(struct IArray *self, const void *item);
 
     /**
-     * @brief Clones the list (shallow copy).
-     * @param self Pointer to the IArray instance.
-     * @return A new IArray instance that is a shallow copy of the original, or NULL on failure.
+     * @brief Creates a shallow copy of the array.
+     *
+     * @param self Pointer to the array instance.
+     *
+     * @return Newly allocated array, or NULL on failure.
      */
     struct IArray *(*clone)(const struct IArray *self);
 
     /**
-     * @brief Returns the number of items in the list.
-     * @param self Pointer to the IArray instance.
-     * @return Number of items in the list.
+     * @brief Returns the number of elements in the array.
+     *
+     * @param self Pointer to the array instance.
+     *
+     * @return Number of elements in the array.
      */
     size_t (*count)(const struct IArray *self);
 
     /**
-     * @brief Clears all items from the list.
-     * @param self Pointer to the IArray instance.
-     * @param destructor Optional destructor called on each item to free it. Can be NULL.
+     * @brief Removes all elements from the array.
+     *
+     * @param self self Pointer to the array instance.
+     * @param destructor Optional destructor called on each item before removal. Can be NULL.
      */
     void (*clear)(struct IArray *self, void (*destructor)(void *item));
 };
 
+/**
+ * @brief Creates a new array instance.
+ *
+ * @return A newly allocated array, or NULL if allocation fails.
+ */
 struct IArray *collection_array_new(void);
 
 /**
- * @brief Deinitializes an Array instance and releases internal resources.
+ * @brief Destroys an array instance.
  *
- * @param array Array instance to deinitialize.
- * @param destructor Optional callback used to destroy stored item values.
+ * Releases all internal resources and optionally destroys each stored
+ * element using the supplied destructor.
+ *
+ * @param array Pointer to the array pointer. On successful return, *array is set to NULL.
+ * @param destructor destructor Optional callback invoked for each stored element before removal. May be NULL.
  */
 void collection_array_dealloc(struct IArray **array, void (*destructor)(void *item));

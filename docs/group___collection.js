@@ -1,6 +1,7 @@
 var group___collection =
 [
-    [ "IArray.h", "_i_array_8h.html", null ],
-    [ "IDictionary.h", "_i_dictionary_8h.html", null ],
-    [ "Mutex.h", "_mutex_8h.html", null ]
+    [ "collection.h", "collection_8h.html", null ],
+    [ "i_array.h", "i__array_8h.html", null ],
+    [ "i_dictionary.h", "i__dictionary_8h.html", null ],
+    [ "i_platform.h", "i__platform_8h.html", null ]
 ];

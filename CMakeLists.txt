@@ -26,11 +26,22 @@ target_include_directories(collection
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Compiler warnings (cross-platform, strict)
+# Compiler warnings
 target_compile_options(collection
         PRIVATE
-            $<$<C_COMPILER_ID:GNU,Clang>:-Wall -Wextra -Werror -fsanitize=address,undefined,leak -fno-omit-frame-pointer>
+            $<$<C_COMPILER_ID:GNU,Clang>:-Wall -Wextra -Werror>
             $<$<C_COMPILER_ID:MSVC>:/W4 /WX>)
+
+option(COLLECTION_ENABLE_SANITIZERS "Enable sanitizers" OFF)
+if(COLLECTION_ENABLE_SANITIZERS)
+    if(MSVC)
+        target_compile_options(collection PRIVATE /fsanitize=address)
+        target_link_options(collection PRIVATE /fsanitize=address)
+    else()
+        target_compile_options(collection PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
+        target_link_options(collection PRIVATE -fsanitize=address,undefined)
+    endif()
+endif()
 
 # Install rules
 include(GNUInstallDirs)
@@ -67,13 +78,13 @@ install(FILES
 
 # Tests
 option(COLLECTION_BUILD_TESTS "Build Collection Tests" ${PROJECT_IS_TOP_LEVEL})
-if (COLLECTION_BUILD_TESTS)
+if(COLLECTION_BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif ()
 
 # Examples
 option(COLLECTION_BUILD_EXAMPLES "Build Collection Examples" OFF)
-if (COLLECTION_BUILD_EXAMPLES)
+if(COLLECTION_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif ()

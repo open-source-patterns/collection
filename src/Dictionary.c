@@ -14,8 +14,8 @@
 
 #define INITIAL_CAPACITY 16
 
-// 🔑 djb2 string hash function
-static unsigned long hash(const char *str) { // djb2 hash
+// Computes the hash value for a string key.
+static unsigned long hash(const char *str) {
     unsigned long hash = 5381;
     while (*str) {
         hash = (hash << 5) + hash + (unsigned char)*str++;
@@ -23,7 +23,7 @@ static unsigned long hash(const char *str) { // djb2 hash
     return hash;
 }
 
-// 🔍 Retrieve value by key with read-lock
+// Returns the value associated with the specified key.
 static void *get(const struct IDictionary *self, const char *key) {
     struct Dictionary *this = (struct Dictionary *) self;
 
@@ -34,7 +34,7 @@ static void *get(const struct IDictionary *self, const char *key) {
 
     for (const struct DictionaryNode *cursor = this->buckets[index]; cursor; cursor = cursor->next) {
         if (strcmp(cursor->key, key) == 0) {
-            value = (void *) cursor->value; // 🎯 Found value
+            value = (void *) cursor->value; // Found value
             break;
         }
     }
@@ -43,7 +43,7 @@ static void *get(const struct IDictionary *self, const char *key) {
     return value;
 }
 
-// ➕ Insert key-value pair with write-lock
+// Inserts a new key-value pair.
 static bool put(struct IDictionary *self, const char *key, const void *value) {
     struct Dictionary *this = (struct Dictionary *) self;
     bool added = false;
@@ -57,7 +57,7 @@ static bool put(struct IDictionary *self, const char *key, const void *value) {
         goto out_unlock;
     }
 
-    node->key = strdup(key); // 🆕 Duplicate key string for ownership
+    node->key = strdup(key); // Own a copy of the key because the caller may release or mutate its string.
     if (node->key == NULL) {
         fprintf(stderr, "\033[0;31m[Collection::Dictionary::put] Error: Failed to allocate DictionaryNode key.\033[0m\n");
         free(node);
@@ -67,7 +67,7 @@ static bool put(struct IDictionary *self, const char *key, const void *value) {
     node->next = NULL;
     this->size++;
 
-    // 🔗 Append new DictionaryNode to bucket's linked list
+    // Append new DictionaryNode to bucket's linked list
     struct DictionaryNode **cursor;
     for(cursor = &this->buckets[index]; *cursor; cursor = &(*cursor)->next) {}
     *cursor = node;
@@ -78,7 +78,7 @@ out_unlock:
     return added;
 }
 
-// 🔎 Check existence of key with read-lock
+// Returns whether the specified key exists.
 static bool contains_key(const struct IDictionary *self, const char *key) {
     struct Dictionary *this = (struct Dictionary *) self;
     bool found = false;
@@ -88,7 +88,7 @@ static bool contains_key(const struct IDictionary *self, const char *key) {
     const unsigned long index = hash(key) % this->capacity;
     for (const struct DictionaryNode *cursor = this->buckets[index]; cursor; cursor = cursor->next) {
         if (strcmp(cursor->key, key) == 0) {
-            found = true; // ✅ Key found
+            found = true;
             break;
         }
     }
@@ -97,7 +97,7 @@ static bool contains_key(const struct IDictionary *self, const char *key) {
     return found;
 }
 
-// Remove key and return associated value with write-lock
+// Removes the specified key-value pair.
 void *remove_item(struct IDictionary *self, const char *key) {
     struct Dictionary *this = (struct Dictionary *) self;
     void *value = NULL;
@@ -108,11 +108,11 @@ void *remove_item(struct IDictionary *self, const char *key) {
     for (struct DictionaryNode **cursor = &this->buckets[index]; *cursor; cursor = &(*cursor)->next) {
         struct DictionaryNode *node = *cursor;
         if (strcmp(node->key, key) == 0) {
-            *cursor = node->next;       // 🔗 Remove DictionaryNode from list
+            *cursor = node->next;       // Remove DictionaryNode
             value = (void *) node->value;
 
-            free((void *) node->key);   // 🧹 Free duplicated key
-            free(node);                 // 🧹 Free DictionaryNode
+            free((void *) node->key);
+            free(node);
             this->size--;
             break;
         }
@@ -122,7 +122,7 @@ void *remove_item(struct IDictionary *self, const char *key) {
     return value;
 }
 
-// 🔄 Replace value of existing key with write-lock
+// Replaces the value associated with the specified key.
 static void *replace(const struct IDictionary *self, const char *key, const void *value) {
     struct Dictionary *this = (struct Dictionary *) self;
     void *temp = NULL;
@@ -130,11 +130,10 @@ static void *replace(const struct IDictionary *self, const char *key, const void
     mutex_lock(&this->mutex);
 
     const unsigned long index = hash(key) % this->capacity;
-    // 🔍 Traverse the bucket's linked list
     for (struct DictionaryNode *cursor = this->buckets[index]; cursor; cursor = cursor->next) {
         if (strcmp(cursor->key, key) == 0) {
             temp = (void *) cursor->value;
-            cursor->value = value; // 🔄 Update value
+            cursor->value = value;
             break;
         }
     }
@@ -143,7 +142,7 @@ static void *replace(const struct IDictionary *self, const char *key, const void
     return temp;
 }
 
-// 🧹 Clear all entries with write-lock, optional callback on each value
+// Removes all key-value pairs from the dictionary.
 static bool clear(const struct IDictionary *self, void (*destructor)(void *value)) {
     struct Dictionary *this = (struct Dictionary *) self;
     mutex_lock(&this->mutex);
@@ -153,11 +152,11 @@ static bool clear(const struct IDictionary *self, void (*destructor)(void *value
         while (current != NULL) {
             struct DictionaryNode *node = current;
             current = current->next;
-            free((void *) node->key); // 🧹 Free key
-            if (destructor) destructor((void *) node->value); // 🔔 User cleanup
-            free(node); // 🧹 Free DictionaryNode
+            free((void *) node->key);
+            if (destructor) destructor((void *) node->value);
+            free(node);
         }
-        this->buckets[i] = NULL; // 🔄 Reset bucket pointer
+        this->buckets[i] = NULL; // Reset bucket pointer
     }
     this->size = 0;
 
@@ -165,10 +164,12 @@ static bool clear(const struct IDictionary *self, void (*destructor)(void *value
     return true;
 }
 
+// Returns the aligned allocation size for Dictionary.
 static size_t size(void) {
     return (sizeof(struct Dictionary) + (sizeof(void *) - 1u)) & ~(sizeof(void *) - 1u);
 }
 
+// Allocates a Dictionary instance.
 static struct IDictionary *alloc() {
     struct IDictionary *dictionary = malloc(size());
 
@@ -180,7 +181,7 @@ static struct IDictionary *alloc() {
     return dictionary;
 }
 
-// 🔧 Initialize dictionary base functions
+// Initializes a Dictionary instance.
 static struct IDictionary *init(struct IDictionary *dictionary) {
     if (dictionary == NULL) return NULL;
 
@@ -208,18 +209,19 @@ exception:
     return NULL;
 }
 
+// Creates a new dictionary instance.
 struct IDictionary *collection_dictionary_new(void) {
     return init(alloc());
 }
 
-// 🧹 DeInit Dictionary instance (note: Optional destructor to free entries)
+// Destroys a dictionary instance. (Optional destructor to free entries)
 void collection_dictionary_dealloc(struct IDictionary **dictionary, void (*destructor)(void *item)) {
     if (dictionary == NULL) return;
     struct Dictionary *this = (struct Dictionary *) *dictionary;
 
     (*dictionary)->clear(*dictionary, destructor);
 
-    free(this->buckets);      // ✅ Free bucket array here
+    free(this->buckets);
     this->buckets = NULL;
     this->capacity = 0;
 

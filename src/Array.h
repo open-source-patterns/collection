@@ -13,28 +13,24 @@
 
 /**
  * @struct ArrayNode
- * @brief Represents a node in a singly linked list.
+ * @brief Node used by the internal singly linked list.
  *
- * Each ArrayNode stores a generic pointer to an item and a pointer to the next ArrayNode in the list.
+ * Stores one item pointer and a link to the next node.
  */
 struct ArrayNode {
-    const void *item;               /**< 📦 Pointer to the stored item (generic type) */
-    struct ArrayNode *next;         /**< ➡️ Pointer to the next ArrayNode in the singly linked list */
+    const void *item;               /**< Stored item pointer. */
+    struct ArrayNode *next;         /**< Next node in the list. */
 };
 
 /**
  * @struct Array
- * @brief Represents a linked-list-based array structure.
+ * @brief Linked-list-backed implementation of IArray.
  *
- * Contains a base interface (IArray) and a pointer to the head ArrayNode of the singly linked list.
- *
- * Defines the Array struct that implements the IArray interface,
- * along with allocation, initialization, creation, and free functions.
- *
- * This implementation provides thread-safe list operations.
+ * Provides the internal storage for array operations using a singly linked
+ * list protected by a mutex.
  */
 struct Array {
-    struct IArray super;            /**< 🧩 Base interface for array operations */
-    struct ArrayNode *list;         /**< 🗃️ Head of the singly linked ArrayNode */
-    Mutex mutex;                    /**< 🔒 Mutex for thread safety */
+    struct IArray super;            /**< IArray interface implemented by this type. */
+    struct ArrayNode *list;         /**< Head node of the linked list. */
+    Mutex mutex;                    /**< Mutex protecting list operations. */
 };

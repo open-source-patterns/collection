@@ -9,8 +9,9 @@
 
 #include <stdio.h>
 
-int main() {
+int main(void) {
     struct IDictionary *dictionary = collection_dictionary_new();
+    if (dictionary == NULL) return 1;
 
     dictionary->put(dictionary, "city", "New York");
 
@@ -18,10 +19,10 @@ int main() {
         printf("City exists\n");
     }
 
-    char *oldValue = dictionary->replace(dictionary, "city", "Los Angeles");
+    const char *oldValue = dictionary->replace(dictionary, "city", "Los Angeles");
     printf("Old city: %s\n", oldValue ? oldValue : "(not replaced)");
 
-    char *newValue = dictionary->get(dictionary, "city");
+    const char *newValue = dictionary->get(dictionary, "city");
     printf("New city: %s\n", newValue ? newValue : "(not found)");
 
     collection_dictionary_dealloc(&dictionary, NULL);

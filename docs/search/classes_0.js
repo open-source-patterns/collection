@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['array_0',['Array',['../struct_array.html',1,'']]],
-  ['arraynode_1',['ArrayNode',['../struct_array_node.html',1,'']]]
+  ['iarray_0',['IArray',['../struct_i_array.html',1,'']]],
+  ['idictionary_1',['IDictionary',['../struct_i_dictionary.html',1,'']]]
 ];

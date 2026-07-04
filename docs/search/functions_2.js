@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['find_0',['find',['../_array_8c.html#ab20f16ed4a5808359d80d8ffadad8403',1,'Array.c']]],
-  ['foreach_1',['forEach',['../_array_8c.html#a989c12016e58e30000f5ec9df28297e8',1,'Array.c']]]
+  ['process_5fstats_5fcollect_0',['process_stats_collect',['../i__platform_8h.html#a6dbdfe703f5a5c218cf3dfb68f157371',1,'i_platform.h']]],
+  ['process_5fstats_5fprint_1',['process_stats_print',['../i__platform_8h.html#abf4db0bc1c5b6fbf229606523feb576b',1,'i_platform.h']]]
 ];

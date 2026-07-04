@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['find_0',['find',['../struct_i_array.html#a48b1e85c45a19d0f956256fc627b019f',1,'IArray']]],
-  ['foreach_1',['forEach',['../struct_i_array.html#a3e0355ff8c77d1d0335e079809ec007a',1,'IArray']]]
+  ['get_0',['get',['../struct_i_array.html#aa7412467be92ed629858550408f7aff6',1,'IArray::get'],['../struct_i_dictionary.html#a39d530505df84dce4408b0f39456371b',1,'IDictionary::get']]]
 ];

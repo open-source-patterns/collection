@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['interface_0',['Public Interface',['../group___collection.html',1,'']]]
+  ['collection_0',['Collection',['../group___collection.html',1,'']]]
 ];

@@ -9,8 +9,9 @@
 
 #include <stdio.h>
 
-int main() {
+int main(void) {
     struct IArray *array = collection_array_new();
+    if (array == NULL) return 1;
 
     array->push(array, "One");
     array->push(array, "Two");

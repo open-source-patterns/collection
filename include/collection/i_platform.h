@@ -1,6 +1,7 @@
 /**
  * @file i_platform.h
- * @brief Cross-platform mutex and thread abstraction.
+ * @ingroup Collection
+ * @brief Cross-platform mutex, once, alignment, and process statistics utilities.
  */
 #pragma once
 
@@ -10,13 +11,30 @@
 #endif
 #include <windows.h>
 #include <malloc.h>
-#define alloca _alloca // MSVC sometimes prefers _alloca, this maps the standard name to it
+#define alloca _alloca /* Maps alloca to MSVC's _alloca. */
 
-typedef struct { CRITICAL_SECTION cs; } Mutex;
+/**
+ * @brief Cross-platform mutex type.
+ *
+ * On Windows, this is backed by CRITICAL_SECTION.
+ */
+typedef struct Mutex {
+    CRITICAL_SECTION cs; /**< Native Windows critical section. */
+} Mutex;
+
+/**
+ * @brief Cross-platform one-time initialization token.
+ *
+ * On Windows, this is backed by INIT_ONCE.
+ */
 typedef INIT_ONCE MutexOnce;
+
+/**
+ * @brief Static initializer for MutexOnce.
+ */
 #define MUTEX_ONCE_INIT INIT_ONCE_STATIC_INIT
 
-// Alignment Shim (The UBSan Fix)
+/* Alignment compatibility shim. */
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
     #include <stdalign.h>
 #else
@@ -33,42 +51,107 @@ typedef INIT_ONCE MutexOnce;
 #endif
 
 #else
-#define _GNU_SOURCE
 #include <pthread.h>
 #include <alloca.h>
 #include <stdalign.h>
 
-typedef struct { pthread_rwlock_t rwlock; } Mutex;
+/**
+ * @brief Cross-platform mutex type.
+ *
+ * On POSIX platforms, this is backed by pthread_rwlock_t.
+ */
+typedef struct Mutex {
+    pthread_rwlock_t rwlock; /**< Native POSIX read/write lock. */
+} Mutex;
+
+/**
+ * @brief Cross-platform one-time initialization token.
+ *
+ * On POSIX platforms, this is backed by pthread_once_t.
+ */
 typedef pthread_once_t MutexOnce;
+
+/**
+ * @brief Static initializer for MutexOnce.
+ */
 #define MUTEX_ONCE_INIT PTHREAD_ONCE_INIT
 #endif
 
-// Mutex Function Prototypes
+/**
+ * @brief Initializes a mutex.
+ *
+ * @param mutex Pointer to the mutex to initialize.
+ * @return 0 on success; non-zero on failure.
+ */
 int mutex_init(Mutex *mutex);
+
+/**
+ * @brief Acquires an exclusive mutex lock.
+ *
+ * @param mutex Pointer to the mutex.
+ * @return 0 on success; non-zero on failure.
+ */
 int mutex_lock(Mutex *mutex);
+
+/**
+ * @brief Acquires a shared/read mutex lock.
+ *
+ * @param mutex Pointer to the mutex.
+ * @return 0 on success; non-zero on failure.
+ */
 int mutex_lock_shared(Mutex *mutex);
+
+/**
+ * @brief Releases a mutex lock.
+ *
+ * @param mutex Pointer to the mutex.
+ * @return 0 on success; non-zero on failure.
+ */
 int mutex_unlock(Mutex *mutex);
+
+/**
+ * @brief Destroys a mutex.
+ *
+ * @param mutex Pointer to the mutex to destroy.
+ * @return 0 on success; non-zero on failure.
+ */
 int mutex_destroy(Mutex *mutex);
 
+/**
+ * @brief Executes a callback exactly once for a given once token.
+ *
+ * @param once Pointer to the once token.
+ * @param callback Function to execute once.
+ * @return 0 on success; non-zero on failure.
+ */
 int mutex_once(MutexOnce *once, void (*callback)(void));
 
+/**
+ * @brief Process resource usage statistics.
+ */
 struct process_stats {
-    double max_rss_mb;          /* Peak resident memory */
-    double current_rss_mb;      /* Current resident memory (0 if unsupported) */
+    double max_rss_mb;             /**< Peak resident memory in megabytes. */
+    double current_rss_mb;         /**< Current resident memory in megabytes, or 0 if unsupported. */
 
-    double user_cpu_sec;        /* User CPU time */
-    double system_cpu_sec;      /* Kernel CPU time */
+    double user_cpu_sec;           /**< User CPU time in seconds. */
+    double system_cpu_sec;         /**< Kernel/system CPU time in seconds. */
 
-    long minor_page_faults;
-    long major_page_faults;
+    long minor_page_faults;        /**< Number of minor page faults. */
+    long major_page_faults;        /**< Number of major page faults. */
 
-    long voluntary_ctx_switches;
-    long involuntary_ctx_switches;
+    long voluntary_ctx_switches;   /**< Number of voluntary context switches. */
+    long involuntary_ctx_switches; /**< Number of involuntary context switches. */
 };
 
-/* Collect stats into provided struct.
-   Returns 0 on success, non-zero on failure. */
+/**
+ * @brief Collects process resource usage statistics.
+ *
+ * @param out Pointer to the output statistics structure.
+ * @return 0 on success; non-zero on failure.
+ */
 int process_stats_collect(struct process_stats *out);
 
-/* Convenience printer */
+/**
+ * @brief Prints current process resource usage statistics.
+ */
 void process_stats_print(void);

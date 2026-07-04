@@ -1,13 +1,4 @@
 var searchData=
 [
-  ['capacity_0',['capacity',['../struct_dictionary.html#a9a3a7481be7f915e73b2165707cbb216',1,'Dictionary']]],
-  ['clear_1',['clear',['../struct_i_array.html#ad7447f882ec96b7ee2a168b06d57fcd8',1,'IArray::clear'],['../struct_i_dictionary.html#abd78844326e5317bda81c2cb66a2fc75',1,'IDictionary::clear'],['../_array_8c.html#abacdf77f33954020b784d489298f0fe3',1,'clear(struct IArray *self, void(*callback)(void *item)):&#160;Array.c'],['../_dictionary_8c.html#a402ba8648d496b5ada8836346d923dd6',1,'clear(const struct IDictionary *self, void(*callback)(void *value)):&#160;Dictionary.c']]],
-  ['clone_2',['clone',['../struct_i_array.html#a9cba6123f79d6fdffa9d20388c8c8f54',1,'IArray::clone'],['../_array_8c.html#a2160b6d07aca3fdac5163901c8f11905',1,'clone(const struct IArray *self, const char **error):&#160;Array.c']]],
-  ['collection_2eh_3',['collection.h',['../collection_8h.html',1,'']]],
-  ['collection_5farray_5ffree_4',['collection_array_free',['../_i_array_8h.html#a13491f7aa1cf775b11dbfad5e81d9931',1,'collection_array_free(struct IArray **array):&#160;Array.c'],['../_array_8c.html#a13491f7aa1cf775b11dbfad5e81d9931',1,'collection_array_free(struct IArray **array):&#160;Array.c']]],
-  ['collection_5farray_5fnew_5',['collection_array_new',['../_i_array_8h.html#aa8672fcc0d4ff93aac5d86138d76598b',1,'collection_array_new(const char **error):&#160;Array.c'],['../_array_8c.html#aa8672fcc0d4ff93aac5d86138d76598b',1,'collection_array_new(const char **error):&#160;Array.c']]],
-  ['collection_5fdictionary_5ffree_6',['collection_dictionary_free',['../_i_dictionary_8h.html#a8f5a007c193429f5d8a22ba5b6ea7b5c',1,'collection_dictionary_free(struct IDictionary **dictionary):&#160;Dictionary.c'],['../_dictionary_8c.html#a8f5a007c193429f5d8a22ba5b6ea7b5c',1,'collection_dictionary_free(struct IDictionary **dictionary):&#160;Dictionary.c']]],
-  ['collection_5fdictionary_5fnew_7',['collection_dictionary_new',['../_i_dictionary_8h.html#af94cd7b6cb731263419d445f70c3d934',1,'collection_dictionary_new(const char **error):&#160;Dictionary.c'],['../_dictionary_8c.html#af94cd7b6cb731263419d445f70c3d934',1,'collection_dictionary_new(const char **error):&#160;Dictionary.c']]],
-  ['containskey_8',['containsKey',['../struct_i_dictionary.html#a36b9b94c515d2311434ca1f85c6bf78f',1,'IDictionary::containsKey'],['../_dictionary_8c.html#a7519f13b65224c2f0f81ecf7cc7d53d4',1,'containsKey():&#160;Dictionary.c']]],
-  ['containsvalue_9',['containsValue',['../struct_i_array.html#a84d70d30621793a9c01aa00e4b07e0fb',1,'IArray::containsValue'],['../_array_8c.html#a0fbc31b19e76f4c15088cbc9a8309998',1,'containsValue():&#160;Array.c']]]
+  ['get_0',['get',['../struct_i_array.html#aa7412467be92ed629858550408f7aff6',1,'IArray::get'],['../struct_i_dictionary.html#a39d530505df84dce4408b0f39456371b',1,'IDictionary::get']]]
 ];

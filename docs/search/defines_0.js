@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['initial_5fcapacity_0',['INITIAL_CAPACITY',['../_dictionary_8c.html#a5446a5bbb68bb93392b04dfbfa0095af',1,'Dictionary.c']]]
+  ['mutex_5fonce_5finit_0',['MUTEX_ONCE_INIT',['../i__platform_8h.html#adcadef7a963cfcdf2f7ec4ebd61cc573',1,'i_platform.h']]]
 ];

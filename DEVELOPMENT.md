@@ -54,7 +54,7 @@ ctest --test-dir build-release
 
 ### Documentation
 ```shell
-brew install doxygen && doxygen -g # Installation and setup
+brew install doxygen && doxygen -g # Installation and setup (one-time only)
 doxygen && open docs/index.html # To re-generate docs
 ```
 

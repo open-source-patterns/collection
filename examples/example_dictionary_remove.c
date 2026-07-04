@@ -9,14 +9,15 @@
 
 #include <stdio.h>
 
-int main() {
+int main(void) {
     struct IDictionary *dictionary = collection_dictionary_new();
+    if (dictionary == NULL) return 1;
 
     dictionary->put(dictionary, "one", "1");
     dictionary->put(dictionary, "two", "2");
     dictionary->put(dictionary, "three", "3");
 
-    char *removed = dictionary->remove_item(dictionary, "two");
+    const char *removed = dictionary->remove_item(dictionary, "two");
     printf("Removed: %s\n", removed ? removed : "(not found)");
 
     collection_dictionary_dealloc(&dictionary, NULL);

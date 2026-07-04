@@ -1,6 +1,6 @@
 /**
  * @file test_array.c
- * @brief Array Unit Test
+ * @brief Array unit tests.
  *
  * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
@@ -12,10 +12,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void before_all(void) {}
-static void before_each(void) {}
-static void after_each(void) {}
-static void after_all(void) {}
+static void before_all(void) { }
+static void before_each(void) { }
+static void after_each(void) { }
+static void after_all(void) { }
 
 static void test(const char *name, void (*callback)(void)) {
     printf("\033[0;34m[RUNNING]\033[0m %s...\n", name);
@@ -41,14 +41,14 @@ int main(void) {
     test("test_find", test_find);
     test("test_first_index", test_first_index);
     test("test_last_index", test_last_index);
-    test("test_add_first", test_add_first);
-    test("test_add_last", test_add_last);
-    test("test_remove_first", test_remove_first);
-    test("test_remove_last", test_remove_last);
-    test("test_remove", test_remove);
+    test("test_unshift", test_unshift);
+    test("test_push", test_push);
+    test("test_shift", test_shift);
+    test("test_pop", test_pop);
+    test("test_remove_item", test_remove_item);
     test("test_contains_value", test_contains_value);
     test("test_clone", test_clone);
-    test("test_size", test_size);
+    test("test_count", test_count);
     test("test_clear", test_clear);
     test("test_dealloc", test_dealloc);
     after_all();
@@ -58,13 +58,14 @@ int main(void) {
 }
 
 struct Test {
-    char *name;
+    const char *name;
 };
 
 struct Value {
     int value;
 };
 
+// Verifies retrieving elements by index.
 void test_get(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -77,9 +78,12 @@ void test_get(void) {
     if (strcmp(((struct Test*) array->get(array, 1))->name, "name1") != 0) abort();
     if (strcmp(((struct Test*) array->get(array, 2))->name, "name2") != 0) abort();
 
+    if (array->get(array, 99) != NULL) abort();
+
     collection_array_dealloc(&array, NULL);
 }
 
+// Verifies replacing elements by index.
 void test_put(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -99,22 +103,27 @@ void test_put(void) {
     collection_array_dealloc(&array, NULL);
 }
 
-static void testForEachCallback(const void *element, const void *item) {
+// Callback used by test_for_each.
+static void consumer(const void *element, const void *data) {
     struct Value *value = (struct Value *)element;
-    const int *multiplier = item;
+    const int *multiplier = data;
     value->value *= *multiplier;
 }
 
+// Verifies iterating over all elements.
 void test_for_each(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
+
+    const int multiplier = 2;
+
+    array->for_each(array, consumer, &multiplier); // empty iteration
 
     array->push(array, &(struct Value){1});
     array->push(array, &(struct Value){2});
     array->push(array, &(struct Value){3});
 
-    const int multiplier = 2;
-    array->for_each(array, testForEachCallback, &multiplier);
+    array->for_each(array, consumer, &multiplier);
 
     if (((struct Value *) array->shift(array))->value != 2) abort();
     if (((struct Value *) array->shift(array))->value != 4) abort();
@@ -123,10 +132,12 @@ void test_for_each(void) {
     collection_array_dealloc(&array, NULL);
 }
 
-static bool comparator_find(const void *element, const void *item) {
-    return ((struct Value *) element)->value == ((struct Value *) item)->value;
+// Predicate used by test_find.
+static bool predicate_find(const void *element, const void *data) {
+    return ((struct Value *) element)->value == ((struct Value *) data)->value;
 }
 
+// Verifies finding elements using a predicate.
 void test_find(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -135,22 +146,24 @@ void test_find(void) {
     array->push(array, &(struct Value){2});
     array->push(array, &(struct Value){3});
 
-    const struct Value *value = (struct Value *) array->find(array, comparator_find, &(struct Value){1});
+    const struct Value *value = (struct Value *) array->find(array, predicate_find, &(struct Value){1});
     if (value->value != 1) abort();
-    value = (struct Value *) array->find(array, comparator_find, &(struct Value){2});
+    value = (struct Value *) array->find(array, predicate_find, &(struct Value){2});
     if (value->value != 2) abort();
-    value = (struct Value *) array->find(array, comparator_find, &(struct Value){3});
+    value = (struct Value *) array->find(array, predicate_find, &(struct Value){3});
     if (value->value != 3) abort();
-    value = (struct Value *) array->find(array, comparator_find, &(struct Value){4});
+    value = (struct Value *) array->find(array, predicate_find, &(struct Value){99});
     if (value != NULL) abort();
 
     collection_array_dealloc(&array, NULL);
 }
 
-static bool comparator_first_index(const void *element, const void *item) {
-    return ((struct Value *) element)->value == ((struct Value *) item)->value;
+// Predicate used by test_first_index.
+static bool predicate_first_index(const void *element, const void *data) {
+    return ((struct Value *) element)->value == ((struct Value *) data)->value;
 }
 
+// Verifies locating the first matching element.
 void test_first_index(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -159,20 +172,24 @@ void test_first_index(void) {
     array->push(array, &(struct Value){2});
     array->push(array, &(struct Value){3});
 
-    size_t index = array->first_index(array, comparator_first_index, &(struct Value){1});
+    size_t index = array->first_index(array, predicate_first_index, &(struct Value){1});
     if (index != 0) abort();
-    index = array->first_index(array, comparator_first_index, &(struct Value){2});
+    index = array->first_index(array, predicate_first_index, &(struct Value){2});
     if (index != 1) abort();
-    index = array->first_index(array, comparator_first_index, &(struct Value){3});
+    index = array->first_index(array, predicate_first_index, &(struct Value){3});
     if (index != 2) abort();
+    index = array->first_index(array, predicate_first_index, &(struct Value){99});
+    if (index != (size_t) -1) abort();
 
     collection_array_dealloc(&array, NULL);
 }
 
-static bool comparator_last_index(const void *element, const void *item) {
-    return ((struct Value *) element)->value == ((struct Value *) item)->value;
+// Predicate used by test_last_index.
+static bool predicte_last_index(const void *element, const void *data) {
+    return ((struct Value *) element)->value == ((struct Value *) data)->value;
 }
 
+// Verifies locating the last matching element.
 void test_last_index(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -186,17 +203,20 @@ void test_last_index(void) {
     array->push(array, &(struct Value){3});
     array->push(array, &(struct Value){3});
 
-    size_t index = array->last_index(array, comparator_last_index, &(struct Value){1});
+    size_t index = array->last_index(array, predicte_last_index, &(struct Value){1});
     if (index != 1) abort();
-    index = array->last_index(array, comparator_last_index, &(struct Value){2});
+    index = array->last_index(array, predicte_last_index, &(struct Value){2});
     if (index != 4) abort();
-    index = array->last_index(array, comparator_last_index, &(struct Value){3});
+    index = array->last_index(array, predicte_last_index, &(struct Value){3});
     if (index != 7) abort();
+    index = array->last_index(array, predicte_last_index, &(struct Value){99});
+    if (index != (size_t) -1) abort();
 
     collection_array_dealloc(&array, NULL);
 }
 
-void test_add_first(void) {
+// Verifies inserting elements at the beginning.
+void test_unshift(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
 
@@ -211,7 +231,8 @@ void test_add_first(void) {
     collection_array_dealloc(&array, NULL);
 }
 
-void test_add_last(void) {
+// Verifies appending elements to the end.
+void test_push(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
 
@@ -230,7 +251,8 @@ void test_add_last(void) {
     collection_array_dealloc(&array, NULL);
 }
 
-void test_remove_first(void) {
+// Verifies removing elements from the beginning.
+void test_shift(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
 
@@ -252,7 +274,8 @@ void test_remove_first(void) {
     collection_array_dealloc(&array, NULL);
 }
 
-void test_remove_last(void) {
+// Verifies removing elements from the end.
+void test_pop(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
 
@@ -274,12 +297,13 @@ void test_remove_last(void) {
     collection_array_dealloc(&array, NULL);
 }
 
-void test_remove(void) {
+// Verifies removing a specific element.
+void test_remove_item(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
 
     if (array->remove_item(array, NULL) != NULL) abort();
-    if (array->remove_item(array, &(struct Test) {"name4"}) != NULL) abort();
+    if (array->remove_item(array, &(struct Test) {"name99"}) != NULL) abort();
 
     const struct Test *test1 = &(struct Test) {"name"};
     const struct Test *test2 = &(struct Test) {"name"};
@@ -292,11 +316,12 @@ void test_remove(void) {
     if (array->remove_item(array, test2) != test2) abort();
     if (array->remove_item(array, test1) != test1) abort();
     if (array->remove_item(array, test3) != test3) abort();
-    if (array->remove_item(array, &(struct Test) {"name4"}) != NULL) abort();
+    if (array->remove_item(array, &(struct Test) {"name99"}) != NULL) abort();
 
     collection_array_dealloc(&array, NULL);
 }
 
+// Verifies checking for element existence.
 void test_contains_value(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -329,6 +354,7 @@ void test_contains_value(void) {
     collection_array_dealloc(&array, NULL);
 }
 
+// Verifies cloning an array.
 void test_clone(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -343,6 +369,9 @@ void test_clone(void) {
 
     struct IArray *clone = array->clone(array);
 
+    if (array->count(array) != 3) abort();
+    if (clone->count(clone) != 3) abort();
+
     array->clear(array, NULL);
     if (array->count(array) != 0) abort();
 
@@ -351,11 +380,11 @@ void test_clone(void) {
     if (clone->pop(clone) != test1) abort();
 
     collection_array_dealloc(&array, NULL);
-
     collection_array_dealloc(&clone, NULL);
 }
 
-void test_size(void) {
+// Verifies counting the number of elements.
+void test_count(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
 
@@ -376,7 +405,6 @@ void test_size(void) {
     if (array->count(array) != 2) abort();
 
     array->remove_item(array, test1);
-    array->remove_item(array, test2);
     if (array->count(array) != 1) abort();
 
     array->remove_item(array, test3);
@@ -385,6 +413,7 @@ void test_size(void) {
     collection_array_dealloc(&array, NULL);
 }
 
+// Verifies clearing all elements.
 void test_clear(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();
@@ -402,9 +431,13 @@ void test_clear(void) {
     array->clear(array, NULL);
     if (array->count(array) != 0) abort();
 
+    array->clear(array, NULL); // clear again
+    if (array->count(array) != 0) abort();
+
     collection_array_dealloc(&array, NULL);
 }
 
+// Verifies destroying an array and releasing resources.
 void test_dealloc(void) {
     struct IArray *array = collection_array_new();
     if (array == NULL) abort();

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['iarray_0',['IArray',['../struct_i_array.html',1,'']]],
-  ['idictionary_1',['IDictionary',['../struct_i_dictionary.html',1,'']]]
+  ['process_5fstats_0',['process_stats',['../structprocess__stats.html',1,'']]]
 ];

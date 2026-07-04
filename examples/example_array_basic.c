@@ -9,40 +9,40 @@
 
 #include <stdio.h>
 
-void array_usage1();
-void array_usage2();
+static void array_usage1(void);
+static void array_usage2(void);
 
-int main() {
+int main(void) {
     array_usage1();
     array_usage2();
 
     return 0;
 }
 
-void array_usage1() {
-    struct IArray *array = collection_array_new();
+static void array_usage1(void) {
+    struct IArray *array = collection_array_new(); // Create an array.
+    if (array == NULL) return;
 
-    const char *item1 = "Hello";
-    const char *item2 = "World";
+    // Insert elements.
+    array->push(array, "Hello");
+    array->unshift(array, "World");
 
-    array->push(array, item1);
-    array->unshift(array, item2);
+    printf("Array size: %zu\n", array->count(array)); // Display the number of elements.
 
-    printf("Array size: %zu\n", array->count(array));
-
-    collection_array_dealloc(&array, NULL);
+    collection_array_dealloc(&array, NULL); // Clean up.
 }
 
-void array_usage2() {
-    struct IArray *array = collection_array_new();
+static void array_usage2(void) {
+    struct IArray *array = collection_array_new(); // Create an array.
+    if (array == NULL) return;
 
     array->push(array, "Apple");
     array->push(array, "Banana");
     array->push(array, "Orange");
 
     while (array->count(array) > 0) {
-        printf("Fruit: %s\n", (const char *) array->shift(array)); // Apple Banana Orange
+        printf("Fruit: %s ", (const char *) array->shift(array)); // Prints: Apple Banana Orange
     }
 
-    collection_array_dealloc(&array, NULL);
+    collection_array_dealloc(&array, NULL); // Clean up.
 }

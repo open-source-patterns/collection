@@ -13,29 +13,28 @@
 
 /**
  * @struct DictionaryNode
- * @brief Node representing a key-value pair in a hash table.
+ * @brief Node in a hash table bucket chain.
  *
- * Each node stores a heap-allocated key string, a generic pointer value,
- * and a pointer to the next node for handling hash collisions via chaining.
+ * Stores a key-value pair and a pointer to the next node used for
+ * collision resolution via separate chaining.
  */
 struct DictionaryNode {
-    const char *key;                    /**< 🔑 Heap-allocated key string */
-    const void *value;                  /**< 📦 Pointer to the associated value (generic) */
-    struct DictionaryNode *next;        /**< ➡️ Pointer to the next node in the collision chain */
+    const char *key;                    /**< Heap-allocated key string. */
+    const void *value;                  /**< Associated value. */
+    struct DictionaryNode *next;        /**< Next node in the bucket chain. */
 };
 
 /**
  * @struct Dictionary
- * @brief Hash table dictionary with separate chaining for collision resolution.
+ * @brief Hash table implementation of IDictionary.
  *
- * Contains a base IDictionary interface, an array of bucket pointers
- * each pointing to a linked list of DictionaryNodes,
- * as well as capacity and size metadata.
+ * Stores key-value pairs in an array of buckets, with collisions resolved
+ * using separate chaining. Access is synchronized with a mutex.
  */
 struct Dictionary {
-    struct IDictionary super;           /**< 🧩 Base interface for dictionary operations */
-    struct DictionaryNode **buckets;    /**< 🗃️ Array of bucket heads (linked lists) */
-    size_t capacity;                    /**< 📏 Number of buckets in the hash table */
-    size_t size;                        /**< 📊 Number of key-value pairs stored */
-    Mutex mutex;                        /**< 🔒 Mutex for thread safety */
+    struct IDictionary super;           /**< IDictionary interface implemented by this type. */
+    struct DictionaryNode **buckets;    /**< Array of bucket heads. */
+    size_t capacity;                    /**< Number of buckets. */
+    size_t size;                        /**< Number of stored key-value pairs. */
+    Mutex mutex;                        /**< Mutex protecting dictionary operations. */
 };

@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['base_0',['base',['../struct_array.html#ad4eaa0fa06e12c16ce44890c3118b447',1,'Array::base'],['../struct_dictionary.html#a5c3496f073ae30bf7b7b3343f13b7f58',1,'Dictionary::base']]],
-  ['buckets_1',['buckets',['../struct_dictionary.html#a8302c81dbcd0538b843db1ffc010d5dc',1,'Dictionary']]]
+  ['find_0',['find',['../struct_i_array.html#a48b1e85c45a19d0f956256fc627b019f',1,'IArray']]],
+  ['first_5findex_1',['first_index',['../struct_i_array.html#a733ec5e89b9ad4a01dc9705ee7655317',1,'IArray']]],
+  ['for_5feach_2',['for_each',['../struct_i_array.html#a166a6287af264f22fe96ee483bc870bd',1,'IArray']]]
 ];

@@ -1,6 +1,6 @@
 /**
  * @file test_mutex.c
- * @brief Mutex Unit Test
+ * @brief Mutex unit tests.
  *
  * @author Saad Shams https://linkedin.com/in/muizz
  * @copyright BSD 3-Clause License
@@ -10,7 +10,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+
+#ifdef _WIN32
+typedef HANDLE Thread;
+typedef DWORD WINAPI ThreadResult;
+#define THREAD_RETURN 0
+#else
+typedef pthread_t Thread;
+typedef void *ThreadResult;
+#define THREAD_RETURN NULL
+#endif
 
 #define THREAD_COUNT 16
 #define ITERATIONS   10000
@@ -47,94 +56,119 @@ int main(void) {
     return 0;
 }
 
+// Creates a platform thread.
+static void thread_create(Thread *thread, ThreadResult (*routine)(void *), void *arg) {
+#ifdef _WIN32
+    *thread = CreateThread(NULL, 0, routine, arg, 0, NULL);
+    if (*thread == NULL) abort();
+#else
+    if (pthread_create(thread, NULL, routine, arg) != 0) abort();
+#endif
+}
+
+// Waits for a platform thread to finish.
+static void thread_join(Thread thread) {
+#ifdef _WIN32
+    if (WaitForSingleObject(thread, INFINITE) != WAIT_OBJECT_0) abort();
+    CloseHandle(thread);
+#else
+    if (pthread_join(thread, NULL) != 0) abort();
+#endif
+}
+
 static Mutex counter_mutex;
 static int shared_counter = 0;
 
-void* counter_thread(void* arg) {
-    (void)arg;
-    for (int i = 0; i < ITERATIONS; ++i) {
-        mutex_lock(&counter_mutex);
+// Increments the shared counter under mutex protection.
+static ThreadResult counter_thread(void *arg) {
+    (void) arg;
+    for (int i = 0; i < ITERATIONS; i++) {
+        if (mutex_lock(&counter_mutex) != 0) abort();
         shared_counter++;
-        mutex_unlock(&counter_mutex);
+        if (mutex_unlock(&counter_mutex) != 0) abort();
     }
-    return NULL;
+    return THREAD_RETURN;
 }
 
-void test_mutex_basic(void) { // Mutex Basic Contention Test
-    pthread_t threads[THREAD_COUNT];
+// Verifies mutex locking under concurrent contention.
+void test_mutex_basic(void) {
+    Thread threads[THREAD_COUNT];
 
-    mutex_init(&counter_mutex);
+    if (mutex_init(&counter_mutex) != 0) abort();
     shared_counter = 0;
 
     for (int i = 0; i < THREAD_COUNT; ++i)
-        assert(pthread_create(&threads[i], NULL, counter_thread, NULL) == 0);
+        thread_create(&threads[i], counter_thread, NULL);
 
     for (int i = 0; i < THREAD_COUNT; ++i)
-        assert(pthread_join(threads[i], NULL) == 0);
+        thread_join(threads[i]);
 
-    mutex_destroy(&counter_mutex);
-
-    assert(shared_counter == THREAD_COUNT * ITERATIONS);
+    if (mutex_destroy(&counter_mutex) != 0) abort();
+    if (shared_counter != THREAD_COUNT * ITERATIONS) abort();
 }
 
-static MutexOnce once_token = MUTEX_ONCE_INIT;
+static MutexOnce once_token_basic = MUTEX_ONCE_INIT;
 static int once_counter = 0;
 
+// Initializes once-only state.
 static void once_init(void) {
     once_counter++;
 }
 
-static void* once_thread(void* arg) {
-    (void)arg;
-    mutex_once(&once_token, once_init);
-    return NULL;
+// Invokes once-only initialization from a thread.
+static ThreadResult once_thread(void *arg) {
+    (void) arg;
+    if (mutex_once(&once_token_basic, once_init) != 0) abort();
+    return THREAD_RETURN;
 }
 
-void test_mutex_once(void) { // Mutex Once Test
-    pthread_t threads[THREAD_COUNT];
-
+// Verifies once-only initialization across multiple threads.
+void test_mutex_once(void) {
+    Thread threads[THREAD_COUNT];
     once_counter = 0;
 
     for (int i = 0; i < THREAD_COUNT; ++i)
-        assert(pthread_create(&threads[i], NULL, once_thread, NULL) == 0);
+        thread_create(&threads[i], once_thread, NULL);
 
     for (int i = 0; i < THREAD_COUNT; ++i)
-        assert(pthread_join(threads[i], NULL) == 0);
+        thread_join(threads[i]);
 
-    assert(once_counter == 1);
+    if (once_counter != 1) abort();
 }
 
+static MutexOnce once_token_with_mutex = MUTEX_ONCE_INIT;
 static Mutex init_mutex;
 static int init_value = 0;
 
+// Initializes mutex-protected shared state once.
 static void complex_init(void) {
-    mutex_init(&init_mutex);
+    if (mutex_init(&init_mutex) != 0) abort();
     init_value = 42;
 }
 
-static void* complex_thread(void* arg) {
-    (void)arg;
+// Verifies once-initialized mutex-protected state from a thread.
+static ThreadResult complex_thread(void *arg) {
+    (void) arg;
 
-    mutex_once(&once_token, complex_init);
+    if (mutex_once(&once_token_with_mutex, complex_init) != 0) abort();
 
-    mutex_lock(&init_mutex);
-    assert(init_value == 42);
-    mutex_unlock(&init_mutex);
+    if (mutex_lock(&init_mutex) != 0) abort();
+    if (init_value != 42) abort();
+    if (mutex_unlock(&init_mutex) != 0) abort();
 
-    return NULL;
+    return THREAD_RETURN;
 }
 
-void test_mutex_once_with_mutex(void) { // Mutex Once + Mutex Interaction
-    pthread_t threads[THREAD_COUNT];
-
-    once_token = (MutexOnce)MUTEX_ONCE_INIT;
+// Verifies one-time initialization of mutex-protected shared state.
+void test_mutex_once_with_mutex(void) {
+    Thread threads[THREAD_COUNT];
     init_value = 0;
 
     for (int i = 0; i < THREAD_COUNT; ++i)
-        assert(pthread_create(&threads[i], NULL, complex_thread, NULL) == 0);
+        thread_create(&threads[i], complex_thread, NULL);
 
     for (int i = 0; i < THREAD_COUNT; ++i)
-        assert(pthread_join(threads[i], NULL) == 0);
+        thread_join(threads[i]);
 
-    mutex_destroy(&init_mutex);
+    if (mutex_destroy(&init_mutex) != 0) abort();
 }
