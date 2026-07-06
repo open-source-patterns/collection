@@ -5,6 +5,8 @@
  */
 #pragma once
 
+#pragma region Platform Types
+
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
     #define WIN32_LEAN_AND_MEAN
@@ -77,6 +79,10 @@ typedef pthread_once_t MutexOnce;
 #define MUTEX_ONCE_INIT PTHREAD_ONCE_INIT
 #endif
 
+#pragma endregion
+
+#pragma region Synchronization
+
 /**
  * @brief Initializes a mutex.
  *
@@ -126,6 +132,10 @@ int mutex_destroy(Mutex *mutex);
  */
 int mutex_once(MutexOnce *once, void (*callback)(void));
 
+#pragma endregion
+
+#pragma region Process Statistics
+
 /**
  * @brief Process resource usage statistics.
  */
@@ -155,3 +165,5 @@ int process_stats_collect(struct process_stats *out);
  * @brief Prints current process resource usage statistics.
  */
 void process_stats_print(void);
+
+#pragma endregion

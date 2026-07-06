@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#pragma region Query Operations
+
 // Returns the element at the specified index, or NULL if out of range.
 static const void *get(const struct IArray *self, const size_t index) {
     struct Array *this = (struct Array *) self;
@@ -29,24 +31,6 @@ static const void *get(const struct IArray *self, const size_t index) {
     return NULL;
 }
 
-// Replaces the element at the specified index.
-static void *put(struct IArray *self, const void *item, const size_t index) {
-    struct Array *this = (struct Array *) self;
-    mutex_lock_shared(&this->mutex);
-
-    size_t i = 0;
-    for (struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next, i++) {
-        if (i == index) {
-            void *temp = (void *) cursor->item;
-            cursor->item = item;
-            mutex_unlock(&this->mutex);
-            return temp;
-        }
-    }
-
-    mutex_unlock(&this->mutex);
-    return NULL;
-}
 
 // Invokes a callback for each element.
 static void for_each(const struct IArray *self, void (*consumer)(const void *element, const void *data), const void *data) {
@@ -108,6 +92,101 @@ static size_t last_index(const struct IArray *self, bool (*predicate)(const void
     return index;
 }
 
+
+// Returns whether the array contains the specified element.
+static bool contains_value(const struct IArray *self, const void *item) {
+    struct Array *this = (struct Array *) self;
+    mutex_lock_shared(&this->mutex);
+
+    bool found = false;
+    for (const struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next) {
+        if (cursor->item == item) {
+            found = true;
+            break;
+        }
+    }
+
+    mutex_unlock(&this->mutex);
+    return found;
+}
+
+// Returns the number of elements.
+static size_t count(const struct IArray *self) {
+    struct Array *this = (struct Array *) self;
+    mutex_lock_shared(&this->mutex);
+
+    size_t count = 0;
+    for (const struct ArrayNode *cursor = ((struct Array *) self)->list; cursor; cursor = cursor->next, count++) {}
+
+    mutex_unlock(&this->mutex);
+    return count;
+}
+
+// Creates a shallow copy of the array.
+static struct IArray *array_clone(const struct IArray *self) {
+    struct Array *this = (struct Array *) self;
+    mutex_lock_shared(&this->mutex); // Acquire read lock
+
+    struct ArrayNode *copy = NULL;
+    for (struct ArrayNode *cursor = this->list, **copyPtr = &copy; cursor; cursor = cursor->next) {
+        struct ArrayNode *node = malloc(sizeof(struct ArrayNode));
+        if (node == NULL) {
+            mutex_unlock(&this->mutex);
+            while (copy) {
+                struct ArrayNode *temp = copy;
+                copy = copy->next;
+                free(temp);
+            }
+            fprintf(stderr, "\033[0;31m[Collection::Array::clone] Error: Failed to allocate ArrayNode.\033[0m\n");
+            return NULL;
+        }
+
+        node->item = cursor->item;  // Shallow copy item pointer
+        node->next = NULL;
+        *copyPtr = node;            // Append node to new list
+        copyPtr = &node->next;
+    }
+
+    mutex_unlock(&this->mutex);
+
+    struct IArray *arr = collection_array_new(); // Create a new array container
+    if (arr == NULL) { // cleanup
+        for (struct ArrayNode **cursor = &copy; *cursor;) {
+            struct ArrayNode *temp = *cursor;
+            *cursor = (*cursor)->next;
+            free(temp);
+        }
+        return NULL;
+    }
+
+    // Transfer ownership of the cloned node chain.
+    ((struct Array *) arr)->list = copy;
+    return arr;
+}
+
+#pragma endregion
+
+#pragma region Mutation Operations
+
+// Replaces the element at the specified index.
+static void *put(struct IArray *self, const void *item, const size_t index) {
+    struct Array *this = (struct Array *) self;
+    mutex_lock_shared(&this->mutex);
+
+    size_t i = 0;
+    for (struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next, i++) {
+        if (i == index) {
+            void *temp = (void *) cursor->item;
+            cursor->item = item;
+            mutex_unlock(&this->mutex);
+            return temp;
+        }
+    }
+
+    mutex_unlock(&this->mutex);
+    return NULL;
+}
+
 // Inserts an element at the beginning of the array.
 static const void *unshift(struct IArray *self, const void *item) {
     struct Array *this = (struct Array *) self;
@@ -153,22 +232,6 @@ static bool push(struct IArray *self, const void *item) {
     return success;
 }
 
-// Returns whether the array contains the specified element.
-static bool contains_value(const struct IArray *self, const void *item) {
-    struct Array *this = (struct Array *) self;
-    mutex_lock_shared(&this->mutex);
-
-    bool found = false;
-    for (const struct ArrayNode *cursor = this->list; cursor; cursor = cursor->next) {
-        if (cursor->item == item) {
-            found = true;
-            break;
-        }
-    }
-
-    mutex_unlock(&this->mutex);
-    return found;
-}
 
 // Removes and returns the first element.
 static const void *shift(struct IArray *self) {
@@ -227,60 +290,6 @@ static void *remove_item(struct IArray *self, const void *item) {
     return data;
 }
 
-// Creates a shallow copy of the array.
-static struct IArray *array_clone(const struct IArray *self) {
-    struct Array *this = (struct Array *) self;
-    mutex_lock_shared(&this->mutex); // Acquire read lock
-
-    struct ArrayNode *copy = NULL;
-    for (struct ArrayNode *cursor = this->list, **copyPtr = &copy; cursor; cursor = cursor->next) {
-        struct ArrayNode *node = malloc(sizeof(struct ArrayNode));
-        if (node == NULL) {
-            mutex_unlock(&this->mutex);
-            while (copy) {
-                struct ArrayNode *temp = copy;
-                copy = copy->next;
-                free(temp);
-            }
-            fprintf(stderr, "\033[0;31m[Collection::Array::clone] Error: Failed to allocate ArrayNode.\033[0m\n");
-            return NULL;
-        }
-
-        node->item = cursor->item;  // Shallow copy item pointer
-        node->next = NULL;
-        *copyPtr = node;            // Append node to new list
-        copyPtr = &node->next;
-    }
-
-    mutex_unlock(&this->mutex);
-
-    struct IArray *arr = collection_array_new(); // Create a new array container
-    if (arr == NULL) { // cleanup
-        for (struct ArrayNode **cursor = &copy; *cursor;) {
-            struct ArrayNode *temp = *cursor;
-            *cursor = (*cursor)->next;
-            free(temp);
-        }
-        return NULL;
-    }
-
-    // Transfer ownership of the cloned node chain.
-    ((struct Array *) arr)->list = copy;
-    return arr;
-}
-
-// Returns the number of elements.
-static size_t count(const struct IArray *self) {
-    struct Array *this = (struct Array *) self;
-    mutex_lock_shared(&this->mutex);
-
-    size_t count = 0;
-    for (const struct ArrayNode *cursor = ((struct Array *) self)->list; cursor; cursor = cursor->next, count++) {}
-
-    mutex_unlock(&this->mutex);
-    return count;
-}
-
 // Removes all elements from the array.
 static void clear(struct IArray *self, void (*destructor)(void *item)) {
     struct Array *this = (struct Array *) self;
@@ -295,6 +304,10 @@ static void clear(struct IArray *self, void (*destructor)(void *item)) {
 
     mutex_unlock(&this->mutex);
 }
+
+#pragma endregion
+
+#pragma region Memory Management
 
 // Returns the aligned allocation size for Array.
 static size_t size(void) {
@@ -346,6 +359,10 @@ exception:
     return NULL;
 }
 
+#pragma endregion
+
+#pragma region Public API
+
 // Creates a new array instance.
 struct IArray *collection_array_new(void) {
     return init(alloc());
@@ -362,3 +379,5 @@ void collection_array_dealloc(struct IArray **array, void (*destructor)(void *it
     free(*array);
     *array = NULL;
 }
+
+#pragma endregion

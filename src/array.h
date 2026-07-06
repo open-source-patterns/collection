@@ -11,6 +11,8 @@
 #include "collection/i_array.h"
 #include "collection/i_platform.h"
 
+#pragma region Types
+
 /**
  * @struct ArrayNode
  * @brief Node used by the internal singly linked list.
@@ -34,3 +36,5 @@ struct Array {
     struct ArrayNode *list;         /**< Head node of the linked list. */
     Mutex mutex;                    /**< Mutex protecting list operations. */
 };
+
+#pragma endregion

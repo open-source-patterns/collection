@@ -16,7 +16,13 @@
 #define strdup _strdup
 #endif
 
+#pragma region Constants
+
 #define INITIAL_CAPACITY 16
+
+#pragma endregion
+
+#pragma region Helpers
 
 // Computes the hash value for a string key.
 static unsigned long hash(const char *str) {
@@ -26,6 +32,10 @@ static unsigned long hash(const char *str) {
     }
     return hash;
 }
+
+#pragma endregion
+
+#pragma region Operations
 
 // Returns the value associated with the specified key.
 static void *get(const struct IDictionary *self, const char *key) {
@@ -168,6 +178,10 @@ static bool clear(const struct IDictionary *self, void (*destructor)(void *value
     return true;
 }
 
+#pragma endregion
+
+#pragma region Memory Management
+
 // Returns the aligned allocation size for Dictionary.
 static size_t size(void) {
     return (sizeof(struct Dictionary) + (sizeof(void *) - 1u)) & ~(sizeof(void *) - 1u);
@@ -213,6 +227,10 @@ exception:
     return NULL;
 }
 
+#pragma endregion
+
+#pragma region Public API
+
 // Creates a new dictionary instance.
 struct IDictionary *collection_dictionary_new(void) {
     return init(alloc());
@@ -234,3 +252,5 @@ void collection_dictionary_dealloc(struct IDictionary **dictionary, void (*destr
     free(*dictionary);
     *dictionary = NULL;
 }
+
+#pragma endregion

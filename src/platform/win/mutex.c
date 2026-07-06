@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#pragma region Synchronization
+
 // Initializes a mutex.
 int mutex_init(Mutex *mutex) {
     if (mutex == NULL) return -1;
@@ -48,8 +50,14 @@ static BOOL CALLBACK mutex_once_callback(PINIT_ONCE InitOnce, PVOID Parameter, P
     return TRUE;
 }
 
+#pragma endregion
+
+#pragma region One-Time Initialization
+
 // Executes a callback exactly once.
 int mutex_once(MutexOnce *once, void (*callback)(void)) {
     InitOnceExecuteOnce(once, mutex_once_callback, (PVOID)callback, NULL);
     return 0;
 }
+
+#pragma endregion

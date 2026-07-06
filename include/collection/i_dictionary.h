@@ -16,7 +16,8 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stddef.h>
+
+#pragma region Types
 
 /**
  * @brief Interface for a generic, thread-safe dictionary.
@@ -85,6 +86,10 @@ struct IDictionary {
     bool (*clear)(const struct IDictionary *self, void (*destructor)(void *value));
 };
 
+#pragma endregion
+
+#pragma region Public API
+
 /**
  * @brief Creates a new dictionary instance.
  *
@@ -102,3 +107,5 @@ struct IDictionary *collection_dictionary_new(void);
  * @param destructor Optional callback invoked for each stored value before destruction. May be NULL.
  */
 void collection_dictionary_dealloc(struct IDictionary **dictionary, void (*destructor)(void *item));
+
+#pragma endregion

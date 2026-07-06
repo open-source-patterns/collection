@@ -11,6 +11,8 @@
 #include "collection/i_dictionary.h"
 #include "collection/i_platform.h"
 
+#pragma region Types
+
 /**
  * @struct DictionaryNode
  * @brief Node in a hash table bucket chain.
@@ -38,3 +40,5 @@ struct Dictionary {
     size_t size;                        /**< Number of stored key-value pairs. */
     Mutex mutex;                        /**< Mutex protecting dictionary operations. */
 };
+
+#pragma endregion

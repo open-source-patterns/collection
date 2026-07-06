@@ -18,6 +18,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#pragma region Types
+
 /**
  * @brief Interface for a generic, thread-safe array.
  */
@@ -31,17 +33,6 @@ struct IArray {
      * @return Pointer to the element, or NULL if the index is out of range.
      */
     const void *(*get)(const struct IArray *self, size_t index);
-
-    /**
-     * @brief Replaces the element at the specified index.
-     *
-     * @param self Pointer to the array instance.
-     * @param item Pointer to the replacement element.
-     * @param index Zero-based index.
-     *
-     * @return Pointer to the previous element, or NULL if the index is out of range.
-     */
-    void *(*put)(struct IArray *self, const void *item, size_t index);
 
     /**
      * @brief Invokes a callback for each element in the array.
@@ -86,6 +77,45 @@ struct IArray {
     size_t (*last_index)(const struct IArray *self, bool (*predicate)(const void *element, const void *data), const void *data);
 
     /**
+     * @brief Determines whether the array contains the specified element.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the element to search for.
+     *
+     * @return true if the element exists; otherwise false.
+     */
+    bool (*contains_value)(const struct IArray *self, const void *item);
+
+    /**
+     * @brief Returns the number of elements in the array.
+     *
+     * @param self Pointer to the array instance.
+     *
+     * @return Number of elements in the array.
+     */
+    size_t (*count)(const struct IArray *self);
+
+    /**
+     * @brief Creates a shallow copy of the array.
+     *
+     * @param self Pointer to the array instance.
+     *
+     * @return Newly allocated array, or NULL on failure.
+     */
+    struct IArray *(*clone)(const struct IArray *self);
+
+    /**
+     * @brief Replaces the element at the specified index.
+     *
+     * @param self Pointer to the array instance.
+     * @param item Pointer to the replacement element.
+     * @param index Zero-based index.
+     *
+     * @return Pointer to the previous element, or NULL if the index is out of range.
+     */
+    void *(*put)(struct IArray *self, const void *item, size_t index);
+
+    /**
      * @brief Inserts an element at the beginning of the array.
      *
      * @param self Pointer to the array instance.
@@ -104,16 +134,6 @@ struct IArray {
      * @return true if the element was inserted successfully; otherwise false.
      */
     bool (*push)(struct IArray *self, const void *item);
-
-    /**
-     * @brief Determines whether the array contains the specified element.
-     *
-     * @param self Pointer to the array instance.
-     * @param item Pointer to the element to search for.
-     *
-     * @return true if the element exists; otherwise false.
-     */
-    bool (*contains_value)(const struct IArray *self, const void *item);
 
     /**
      * @brief Removes and returns the first element.
@@ -144,24 +164,6 @@ struct IArray {
     void *(*remove_item)(struct IArray *self, const void *item);
 
     /**
-     * @brief Creates a shallow copy of the array.
-     *
-     * @param self Pointer to the array instance.
-     *
-     * @return Newly allocated array, or NULL on failure.
-     */
-    struct IArray *(*clone)(const struct IArray *self);
-
-    /**
-     * @brief Returns the number of elements in the array.
-     *
-     * @param self Pointer to the array instance.
-     *
-     * @return Number of elements in the array.
-     */
-    size_t (*count)(const struct IArray *self);
-
-    /**
      * @brief Removes all elements from the array.
      *
      * @param self self Pointer to the array instance.
@@ -169,6 +171,10 @@ struct IArray {
      */
     void (*clear)(struct IArray *self, void (*destructor)(void *item));
 };
+
+#pragma endregion
+
+#pragma region Public API
 
 /**
  * @brief Creates a new array instance.
@@ -187,3 +193,5 @@ struct IArray *collection_array_new(void);
  * @param destructor destructor Optional callback invoked for each stored element before removal. May be NULL.
  */
 void collection_array_dealloc(struct IArray **array, void (*destructor)(void *item));
+
+#pragma endregion

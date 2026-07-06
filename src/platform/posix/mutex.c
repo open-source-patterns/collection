@@ -3,6 +3,8 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+#pragma region Synchronization
+
 // Initializes a mutex.
 int mutex_init(Mutex *mutex) {
     if (mutex == NULL) return -1;
@@ -33,8 +35,14 @@ int mutex_destroy(Mutex *mutex) {
     return pthread_rwlock_destroy(&mutex->rwlock);
 }
 
+#pragma endregion
+
+#pragma region One-Time Initialization
+
 // Executes a callback exactly once.
 int mutex_once(MutexOnce *once, void (*callback)(void)) {
     if (once == NULL || callback == NULL) return -1;
     return pthread_once(once, callback);
 }
+
+#pragma endregion
