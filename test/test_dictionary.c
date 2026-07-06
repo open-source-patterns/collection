@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#pragma region Test Lifecycle
+
 static void before_all(void) { }
 static void before_each(void) { }
 static void after_each(void) { }
@@ -27,6 +29,10 @@ static void test(const char *name, void (*callback)(void)) {
     printf("\033[0;32m[PASSED]\033[0m %s\n", name);
     fflush(stdout);
 }
+
+#pragma endregion
+
+#pragma region Test Runner
 
 int main(void) {
     printf("\n\033[1;36m================================================\033[0m\n");
@@ -47,9 +53,17 @@ int main(void) {
     return 0;
 }
 
+#pragma endregion
+
+#pragma region Types
+
 struct Test {
     int value;
 };
+
+#pragma endregion
+
+#pragma region Tests
 
 // Verifies retrieving values by key.
 void test_get(void) {
@@ -159,9 +173,9 @@ void test_replace(void) {
 
     const struct Test *test4 = &(struct Test) {4};
 
-    const struct Test *oldValue = dictionary->replace(dictionary, "key3", test4);
+    const struct Test *old_value = dictionary->replace(dictionary, "key3", test4);
 
-    if (oldValue != test3) abort();
+    if (old_value != test3) abort();
     if (dictionary->contains_key(dictionary, "key3") != true) abort();
 
     if (dictionary->get(dictionary, "key3") != test4) abort();
@@ -215,3 +229,5 @@ void test_dealloc(void) {
     // Pass free if stored items are heap allocated
     collection_dictionary_dealloc(&dictionary, free);
 }
+
+#pragma endregion

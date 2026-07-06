@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#pragma region Test Lifecycle
+
 static void before_all(void) { }
 static void before_each(void) { }
 static void after_each(void) { }
@@ -28,6 +30,10 @@ static void test(const char *name, void (*callback)(void)) {
     printf("\033[0;32m[PASSED]\033[0m %s\n", name);
     fflush(stdout);
 }
+
+#pragma endregion
+
+#pragma region Test Runner
 
 int main(void) {
     printf("\n\033[1;36m================================================\033[0m\n");
@@ -57,6 +63,10 @@ int main(void) {
     return 0;
 }
 
+#pragma endregion
+
+#pragma region Types
+
 struct Test {
     const char *name;
 };
@@ -64,6 +74,10 @@ struct Test {
 struct Value {
     int value;
 };
+
+#pragma endregion
+
+#pragma region Tests
 
 // Verifies retrieving elements by index.
 void test_get(void) {
@@ -185,7 +199,7 @@ void test_first_index(void) {
 }
 
 // Predicate used by test_last_index.
-static bool predicte_last_index(const void *element, const void *data) {
+static bool predicate_last_index(const void *element, const void *data) {
     return ((struct Value *) element)->value == ((struct Value *) data)->value;
 }
 
@@ -203,13 +217,13 @@ void test_last_index(void) {
     array->push(array, &(struct Value){3});
     array->push(array, &(struct Value){3});
 
-    size_t index = array->last_index(array, predicte_last_index, &(struct Value){1});
+    size_t index = array->last_index(array, predicate_last_index, &(struct Value){1});
     if (index != 1) abort();
-    index = array->last_index(array, predicte_last_index, &(struct Value){2});
+    index = array->last_index(array, predicate_last_index, &(struct Value){2});
     if (index != 4) abort();
-    index = array->last_index(array, predicte_last_index, &(struct Value){3});
+    index = array->last_index(array, predicate_last_index, &(struct Value){3});
     if (index != 7) abort();
-    index = array->last_index(array, predicte_last_index, &(struct Value){99});
+    index = array->last_index(array, predicate_last_index, &(struct Value){99});
     if (index != (size_t) -1) abort();
 
     collection_array_dealloc(&array, NULL);
@@ -456,3 +470,5 @@ void test_dealloc(void) {
     // Pass free if stored items are heap allocated
     collection_array_dealloc(&array, free);
 }
+
+#pragma endregion

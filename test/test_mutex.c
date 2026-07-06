@@ -11,6 +11,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#pragma region Constants
+
+#define THREAD_COUNT 16
+#define ITERATIONS   10000
+
+#pragma endregion
+
+#pragma region Platform Types
+
 #ifdef _WIN32
 typedef HANDLE Thread;
 typedef DWORD WINAPI ThreadResult;
@@ -21,8 +30,9 @@ typedef void *ThreadResult;
 #define THREAD_RETURN NULL
 #endif
 
-#define THREAD_COUNT 16
-#define ITERATIONS   10000
+#pragma endregion
+
+#pragma region Test Lifecycle
 
 static void before_all(void) {}
 static void before_each(void) {}
@@ -41,6 +51,10 @@ static void test(const char *name, void (*callback)(void)) {
     fflush(stdout);
 }
 
+#pragma endregion
+
+#pragma region Test Runner
+
 int main(void) {
     printf("\n\033[1;36m================================================\033[0m\n");
     printf("\033[1;36m[SUITE] %s\033[0m\n", "MutexTest");
@@ -55,6 +69,10 @@ int main(void) {
     printf("\n\033[1;32m[DONE] All tests in suite finished.\033[0m\n");
     return 0;
 }
+
+#pragma endregion
+
+#pragma region Thread Helpers
 
 // Creates a platform thread.
 static void thread_create(Thread *thread, ThreadResult (*routine)(void *), void *arg) {
@@ -75,6 +93,10 @@ static void thread_join(Thread thread) {
     if (pthread_join(thread, NULL) != 0) abort();
 #endif
 }
+
+#pragma endregion
+
+#pragma region Mutex Tests
 
 static Mutex counter_mutex;
 static int shared_counter = 0;
@@ -107,6 +129,10 @@ void test_mutex_basic(void) {
     if (shared_counter != THREAD_COUNT * ITERATIONS) abort();
 }
 
+#pragma endregion
+
+#pragma region Once Tests
+
 static MutexOnce once_token_basic = MUTEX_ONCE_INIT;
 static int once_counter = 0;
 
@@ -135,6 +161,10 @@ void test_mutex_once(void) {
 
     if (once_counter != 1) abort();
 }
+
+#pragma endregion
+
+#pragma region Once + Mutex Tests
 
 static MutexOnce once_token_with_mutex = MUTEX_ONCE_INIT;
 static Mutex init_mutex;
@@ -172,3 +202,5 @@ void test_mutex_once_with_mutex(void) {
 
     if (mutex_destroy(&init_mutex) != 0) abort();
 }
+
+#pragma endregion
